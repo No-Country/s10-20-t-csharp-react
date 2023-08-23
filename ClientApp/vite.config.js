@@ -6,22 +6,16 @@ import mkcert from 'vite-plugin-mkcert'
 export default defineConfig({
     server: {
         proxy: {
-            "/weatherforecast*": {
-                target: "https://localhost:7280",
-                changeOrigin: true,
-                secure: false,
-            },
             "/swagger": {
-                target: "https://localhost:7280",
+                target: "https://localhost:7125",
                 changeOrigin: true,
                 secure: false,
             },
              "/api": {
-                target: "https://localhost:7280",
+                target: "https://localhost:7125",
                 changeOrigin: true,
                 secure: false,
             }
-
         },
     },
     plugins: [react(), mkcert()],
