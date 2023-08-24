@@ -1,12 +1,9 @@
-import React, { useEffect, useState } from "react";
-
-
-const Home = () => {
+function Home() {
   return (
     <>
-     Vite
+      <h1>Lapp</h1>
     </>
   );
-};
+}
 
 export default Home;
