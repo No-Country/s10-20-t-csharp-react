@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using quejapp.Data;
 using s10.Back.Data;
 
 
@@ -46,7 +48,16 @@ builder.Services.AddAuthentication(options =>
     ;
 
 
-builder.Services.AddControllers(options => options.EnableEndpointRouting = false);
+builder.Services.AddControllers(options => 
+{
+    options.EnableEndpointRouting = false;
+    options.CacheProfiles.Add("NoCache", new CacheProfile() { NoStore = true });
+    options.CacheProfiles.Add("Any-60", new CacheProfile()
+    {
+        Location = ResponseCacheLocation.Any,
+        Duration = 60
+    });
+});
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen(option =>
@@ -75,6 +86,12 @@ builder.Services.AddSwaggerGen(option =>
         }
     });
 });
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    //options.UseSqlServer(builder.Configuration["SqlServer:ConnectionString"]
+    options.UseSqlServer(builder.Configuration["ConnectionStrings:S10"]
+    ));
+
 
 builder.Services.AddAuthorization();
 
