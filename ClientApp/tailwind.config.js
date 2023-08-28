@@ -7,10 +7,14 @@ module.exports = {
         poppins: ["Poppins", "sans-serif"],
       },
       fontSize: {
-        '2xl': "3rem"
+        'display': "2.8rem",
+        'headline-lg': "2.5rem",
+        "title-lg": "",
+        "body-lg": "",
+        "body-md": ""
       },
       colors: {
-        white: "#ffffff",
+        "white": "#ffffff",
         "bg-color": "#fff",
         "black": "#0C0C0D",
         "primary-50": "#F8D36F",
@@ -19,8 +23,8 @@ module.exports = {
         "secondary-100": "#92AF43",
         "terciary-50": "#7CACE9",
         "terciary-100": "#1E3756",
-        success: "",
-        error: "#ff4e64",
+        "success": "",
+        "error": "#ff4e64",
       },
       borderRadius: {
         '2xl': "20px"
