@@ -1,6 +1,7 @@
 import React from 'react'
 import {Link} from "react-router-dom"
 
+
 const SignIn = () => {
   return (
     <div>
@@ -42,8 +43,15 @@ const SignIn = () => {
                         <button className='underline'>Iniciar Sesion</button>
                     </div>
 
-                    <div className='justify-center mt-6 bg-white'>
-                        <button className=''>Iniciar Sesion con Google</button>
+                    <div className='justify-center mt-6 bg-white flex'>
+                            <div>
+                          
+                            </div>
+
+                            <div>
+                              <button className=''>Iniciar Sesion con Google</button>
+                            </div>
+                   
                     </div>
                  
                     <div className='justify-center bg-white'>

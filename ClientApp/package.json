@@ -8,6 +8,7 @@
     "serve": "vite preview"
   },
   "dependencies": {
+    "@mui/icons-material": "^5.14.6",
     "@phosphor-icons/react": "^2.0.10",
     "axios": "^1.4.0",
     "normalize.css": "^8.0.1",
@@ -21,12 +22,11 @@
     "redux-thunk": "^2.4.2",
     "sweetalert2": "^11.7.27",
     "vite-plugin-mkcert": "^1.16.0"
-
-
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.0.4",
     "autoprefixer": "^10.4.15",
+    "daisyui": "^3.6.3",
     "postcss": "^8.4.28",
     "tailwindcss": "^3.3.3",
     "vite": "^4.4.9"
