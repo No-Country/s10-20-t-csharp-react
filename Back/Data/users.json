@@ -1,0 +1,80 @@
+[
+    {
+        "User_ID": 1,
+        "Name": "Rodolfo Karst",
+        "Email": "rodyk@gmail.com",
+        "Address": "525 c/ 9"
+    },
+    {
+        "User_ID": 2,
+        "Name": "Sandra Allegretti",
+        "Email": "sanall@hotmail.com",
+        "Address": "6 c/ 525"
+    },
+    {
+        "User_ID": 4,
+        "Name": "Ignacio Argũello",
+        "Email": "igna_arguello@hotmail.com",
+        "Address": "31 c/527"
+    },
+    {
+        "User_ID": 5,
+        "Name": "Ramón Spaini",
+        "Email": "spainini@gmial.com",
+        "Address": "16 c/69"
+    },
+    {
+        "User_ID": 6,
+        "Name": "Julio Correa",
+        "Email": "correaj22@hotmail.com",
+        "Address": "161 c/ 67"
+    },
+    {
+        "User_ID": 7,
+        "Name": "Walter Hernández",
+        "Email": "walher@gmail.com",
+        "Address": "138 c/ 527"
+    },
+    {
+        "User_ID": 8,
+        "Name": "Esteban Lacarruba",
+        "Email": "lacarruba@hotmail.com",
+        "Address": "134 c/ 528"
+    },
+    {
+        "User_ID": 9,
+        "Name": "Viviana Sartorio",
+        "Email": "vivians88@gmail.com",
+        "Address": "29 c/ 54"
+    },
+    {
+        "User_ID": 10,
+        "Name": "Gisele Pomato",
+        "Email": "giselepo@gmail.com",
+        "Address": "78 bis c/ Av. 7"
+    },
+    {
+        "User_ID": 11,
+        "Name": "Yoly Cano",
+        "Email": "joleen89_c@gmail.com",
+        "Address": "82 c/ 116"
+    },
+    {
+        "User_ID": 12,
+        "Name": "Walter Delgado",
+        "Email": "delgado_w56@gmail.com",
+        "Address": "116 c/ 523"
+    },
+    {
+        "User_ID": 13,
+        "Name": "Bettina Kross",
+        "Email": "bettyk@gmail.com",
+        "Address": "8 c/ 86"
+    },
+    {
+        "User_ID": 14,
+        "Name": "Felipe Arrúa",
+        "Email": "arruafel@gmail.com",
+        "Address": "21 c/ 64"
+    }
+]
