@@ -1,8 +1,13 @@
 import React from 'react'
 import {Link} from "react-router-dom"
+import { useNavigate } from 'react-router-dom'
 
 
 const SignIn = () => {
+
+
+
+
   return (
     <div>
     <>
@@ -49,7 +54,7 @@ const SignIn = () => {
                             </div>
 
                             <div>
-                              <button className=''>Iniciar Sesion con Google</button>
+                              <a href='https://s10nc.somee.com/Auth2/login'>Iniciar Sesion con Google</a>
                             </div>
                    
                     </div>
