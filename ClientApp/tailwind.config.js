@@ -6,19 +6,29 @@ module.exports = {
       fontFamily: {
         poppins: ["Poppins", "sans-serif"],
       },
-      colors: {
-        white: "#ffffff",
-        "gray-50": "#ebebeb",
-        "bg-color": "#f5f5f5",
-        "gray-100": "#999ca0",
-        "gray-150": "#656565",
-        "primary-100": "#1558d6",
-        "primary-50": "#e8f0fe",
-        "primary-150": "#5c9ce8",
-        "secondary-50": "#a4d0c0",
-        "secondary-100": "#488c73",
-        error: "#ff4e64",
+      fontSize: {
+        'display': "2.8rem",
+        'headline-lg': "2.5rem",
+        "title-lg": "",
+        "body-lg": "",
+        "body-md": ""
       },
+      colors: {
+        "white": "#ffffff",
+        "bg-color": "#fff",
+        "black": "#0C0C0D",
+        "primary-50": "#F8D36F",
+        "primary-100": "#F7BD22",
+        "secondary-50": "#ACD299",
+        "secondary-100": "#92AF43",
+        "terciary-50": "#7CACE9",
+        "terciary-100": "#1E3756",
+        "success": "",
+        "error": "#ff4e64",
+      },
+      borderRadius: {
+        '2xl': "20px"
+      }
     },
   },
   plugins: [],

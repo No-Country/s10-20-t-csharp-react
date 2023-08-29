@@ -1,15 +1,15 @@
 {
   "name": "vite-template-react",
-  "version": "1.2.0",
+  "version": "0.1.1",
   "scripts": {
     "start": "vite --port 44461",
-    "dev": "vite --port 44461",
+    "dev": "vite",
     "build": "vite build",
     "serve": "vite preview"
   },
   "dependencies": {
     "@phosphor-icons/react": "^2.0.10",
-    "axios": "^1.4.0",
+    "axios": "^1.5.0",
     "normalize.css": "^8.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -21,8 +21,6 @@
     "redux-thunk": "^2.4.2",
     "sweetalert2": "^11.7.27",
     "vite-plugin-mkcert": "^1.16.0"
-
-
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.0.4",
