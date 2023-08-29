@@ -1,7 +1,7 @@
 import React from 'react'
 import myReportsImg from '../assets/img_myreports.png'
 
-const NewReports = () => {
+const NewReport = () => {
     return (
     <>
         <div className="flex w-full items-start justify-center mt-20">
@@ -28,4 +28,4 @@ const NewReports = () => {
     )
 }
 
-export default NewReports
+export default NewReport
