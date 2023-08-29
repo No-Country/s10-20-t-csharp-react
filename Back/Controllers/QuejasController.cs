@@ -140,6 +140,7 @@ public class QuejasController : ControllerBase
 
         var data = theseQuejas.Select(q => new QuejaResponseDTO
         {
+            Complaint_ID = q.Complaint_ID,
             Text = q.Text,
             Title = q.Title,
             PhotoAdress = q.PhotoAdress,
