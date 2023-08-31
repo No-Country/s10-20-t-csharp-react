@@ -80,15 +80,12 @@ const Register = () => {
                     </div>
 
 
-                    <button  type="submit" className="btn btn-md px-10 mt-4 border border-black ">
-                        Registrarse
+                    <button  type="submit" className="btn btn-md bg-blue-950 text-white font-bold px-10 mt-4 border border-black ">
+                        Registrarme
                     </button>
 
-                    <div className='flex flex-col gap-3 mt-5 mx-auto items-center justify-center'>              
-                        <p className=" text-center text-xs sm:text-sm font-PoppinsSemibold text-pallete-grey">
-                        ¿Ya estás registrado?
-                        <Link Link to="/login" className="px-2 font-PoppinsSemibold leading-6 text-pallete-green">Iniciar sesión</Link>
-                        </p>
+                    <div className='flex flex-col gap-3 mt-5 mx-auto r justify-end'>              
+                        <p className=" text-center text-xs sm:text-sm font-PoppinsSemibold justify-end text-pallete-grey"> Ya tengo cuenta </p>
                     </div>
                     </div>
                 </form>
