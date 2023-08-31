@@ -8,6 +8,8 @@ import { NotFound } from "../pages/404NotFound";
 import SignIn from "../pages/SignIn";
 import Register from "../pages/Register";
 import Report from "../pages/report";
+import MyReports from "../pages/MyReports";
+import NewReport from "../pages/NewReport";
 
 const router = createBrowserRouter([
   {
@@ -33,6 +35,14 @@ const router = createBrowserRouter([
   {
     path: "*",
     element: <NotFound />,
+  },
+  {
+    path: "/myreports",
+    element: <MyReports/>,
+  },
+  {
+    path: "/newreport",
+    element: <NewReport/>,
   },
 ]);
 
