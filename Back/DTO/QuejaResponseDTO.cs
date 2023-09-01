@@ -9,6 +9,7 @@ namespace quejapp.DTO
         public int Complaint_ID { get; set; }
         public string Title { get; set; } = string.Empty;
         public string Text { get; set; } = string.Empty;
+        public string Address { get; set; } = string.Empty;
         public string? VideoAddress { get; set; }
         public string? PhotoAdress { get; set; }
         //public int? District_ID { get; set; } // se requiere joints

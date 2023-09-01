@@ -5,14 +5,17 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using quejapp.Data;
 using s10.Back.Data;
-
+using s10.Back.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
-builder.Services.AddDbContext<Context>(
+//builder.Services.AddDbContext<Context>(
+//   options => options.UseSqlServer(builder.Configuration.GetConnectionString("s10")));
+builder.Services.AddDbContext<ApplicationDbContext>(
    options => options.UseSqlServer(builder.Configuration.GetConnectionString("s10")));
 
+builder.Services.AddScoped<ICloudinaryService, CloudinaryService>();
 
 #region Auth
 

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace quejapp.Models;
 
@@ -10,6 +11,7 @@ public class Queja
     public int Complaint_ID { get; set; }
     public string Title { get; set; } = string.Empty;
     public string Text { get; set; } = string.Empty;
+    public string Address { get; set; } = string.Empty;
     public string? VideoAddress { get; set; }
     public string? PhotoAdress { get; set; }
     [ForeignKey(name: "District")]
@@ -22,6 +24,7 @@ public class Queja
     public District District { get; set; } = null!;
     public Category Category { get; set; } = null!;
     public AppUser User { get; set; } = null!;
+    [JsonIgnore]
     public ICollection<Comment> Comments { get; } = new List<Comment>();
 
 }

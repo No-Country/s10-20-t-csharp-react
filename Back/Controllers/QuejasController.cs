@@ -1,11 +1,19 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using quejapp.Data;
 using quejapp.DTO;
 using quejapp.Models;
+using s10.Back.Data;
+using s10.Back.DTO;
+using s10.Back.Services;
+using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Dynamic.Core;
+using System.Net;
 using System.Xml.Linq;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
@@ -17,58 +25,67 @@ public class QuejasController : ControllerBase
 {
     private readonly ILogger<QuejasController> _logger;
     private readonly ApplicationDbContext _context;
+    // unit of work + repository
+    private readonly ICloudinaryService _cloudinaryService;
     private List<Comment> _comments;
     private List<Queja> _quejas;
     private List<Category> _categories;
     private List<AppUser> _users;
     private List<District> _districts;
 
-    public QuejasController(ILogger<QuejasController> logger, ApplicationDbContext context)
+    public QuejasController(ILogger<QuejasController> logger, ApplicationDbContext context, ICloudinaryService cloudinaryService)
     {
         _logger = logger;
         _context = context;
+        _cloudinaryService = cloudinaryService;
     }
-    [HttpGet] //mover a quejacontrollers
-    [Route("/api/Quejas/{id}/comments")]
+    [HttpGet] 
+    [Route("{id}/comments")]
     [ResponseCache(CacheProfileName = "Any-60")]
-    public async Task<ActionResult<PagedListResponse<CommentResponseDTO>>> GetAllByQueja([FromQuery] CommentByQuejaDTO input, int id)
+    public async Task<ActionResult<PagedListResponse<CommentResponseDTO>>> GetCommentsByQueja(
+        [FromQuery] CommentByQuejaDTO input, int id)
     {
-        if (_comments is null)
-        {
-            _comments = JsonConvert.DeserializeObject<List<Comment>>(System.IO.File.ReadAllText(@"./Back/Data/comments.json"))!;
-        }
-        if (_categories is null)
-        {
-            _categories = JsonConvert.DeserializeObject<List<Category>>(System.IO.File.ReadAllText(@"./Back/Data/categories.json"))!;
-        }
-
-        var thecomments = _comments.Where(c => c.Complaint_ID == id);
-        if (!string.IsNullOrEmpty(input.FilterQuery))
-            thecomments = thecomments.Where(d => d.Text.Contains(input.FilterQuery));
         #region SQLServer
-        //var query = _context.Comment.Where(c => c.Complaint_ID == id);       
-        //if (!string.IsNullOrEmpty(input.FilterQuery))
-        //    query = query.Where(d => d.Text.Contains(input.FilterQuery));
+        var query = _context.Comment.AsQueryable().Where(c => c.Complaint_ID == id);
 
-        //query = query.OrderBy($"{input.SortColumn} {input.SortOrder}");
+        if (!string.IsNullOrEmpty(input.FilterQuery))
+            query = query.Where(d => d.Text.Contains(input.FilterQuery));
+
+        query = query.OrderBy($"{input.SortColumn} {input.SortOrder}");
+        int recordCount = await query.CountAsync();
         #endregion
-        int recordCount = thecomments.Count();
 
+        #region WithFiles
+        //if (_comments is null)
+        //{
+        //    _comments = JsonConvert.DeserializeObject<List<Comment>>(System.IO.File.ReadAllText(@"./Back/Data/comments.json"))!;
+        //}
+        //if (_categories is null)
+        //{
+        //    _categories = JsonConvert.DeserializeObject<List<Category>>(System.IO.File.ReadAllText(@"./Back/Data/categories.json"))!;
+        //}
+
+        //var thecomments = _comments.Where(c => c.Complaint_ID == id);
+        //if (!string.IsNullOrEmpty(input.FilterQuery))
+        //    thecomments = thecomments.Where(d => d.Text.Contains(input.FilterQuery));
+
+        //int recordCount = thecomments.Count();
+        #endregion
         if (recordCount > 0)
         {
-            var data = thecomments.Select(c => new CommentResponseDTO
-            {
+            var data = query.Include(q => q.User)
+                .Select(c => new CommentResponseDTO
+                {
 
-                Comment_ID = c.Comment_ID,
-                Text = c.Text,
-                User_ID = c.User_ID, //alguien podría queren en vez del id su nombre de usuario
-                Complaint_ID = c.Complaint_ID,
-                UserName = GetUserName(c.User_ID),
-                AddedAt = c.AddedAt
-            });
-            //var commentResponse = JsonConvert.DeserializeObject<List<CommentResponseDTO>>(JsonConvert.SerializeObject(thecomments));
-            //var commentResponse = JsonConvert.DeserializeObject<List<CommentResponseDTO>>(JsonConvert.SerializeObject(data));
-            var paged = PagedList<CommentResponseDTO>.Create(data.AsQueryable(), input.PageIndex, input.PageSize);
+                    Comment_ID = c.Comment_ID,
+                    Text = c.Text,
+                    User_ID = c.User_ID, //alguien podría queren en vez del id su nombre de usuario
+                    Complaint_ID = c.Complaint_ID,
+                    UserName = c.User!.Name,
+                    AddedAt = c.AddedAt,
+                });
+
+            var paged = PagedList<CommentResponseDTO>.Create(data, input.PageIndex, input.PageSize);
             return new PagedListResponse<CommentResponseDTO>(
                 paged,
                 (HttpContext.GetEndpoint() as RouteEndpoint)!.RoutePattern.RawText!/*funciona... pero a que costo?*/);
@@ -79,82 +96,135 @@ public class QuejasController : ControllerBase
         }
     }
 
-    private string? GetUserName(int? user_ID)
+    [HttpPost]
+    [Authorize]
+    [Route("{id}/comments")]
+    [ResponseCache(CacheProfileName = "NoCache")]
+    public async Task<ActionResult<PagedListResponse<CommentResponseDTO>>> CreateComment([FromQuery] CommentRequestDTO model, int id)
     {
-        if (_users is null)
+        if (ModelState.IsValid)
         {
-            _users = JsonConvert.DeserializeObject<List<AppUser>>(System.IO.File.ReadAllText(@"./Back/Data/users.json"))!;
-        }     
-        return _users.Where(u => u.User_ID == user_ID).FirstOrDefault() is not null 
-            ? _users.Where(u => u.User_ID == user_ID).FirstOrDefault()!.Name 
-            : null;
-        
+            //verificar que el id usuario sea del que crea el comentario cuando haya login
+            // y verificar que exista la queja
+            #region WithFiles
+            //if (_comments is null)
+            //{
+            //    _comments = JsonConvert.DeserializeObject<List<Comment>>(System.IO.File.ReadAllText(@"./Back/Data/comments.json"))!;
+            //}
+
+            //var comment = new Comment()
+            //{
+            //    Text = model.Text,
+            //    User_ID = model.User_ID,
+            //    Complaint_ID = model.Complaint_ID,
+            //    AddedAt = DateTime.Now
+            //};
+            //_comments.Add(comment);
+            //int changes = 1;
+            #endregion
+
+            #region SQLServer
+            if (_context.Comment.Find(id) is null)
+                return NotFound();
+
+            var comment = new Comment()
+            {
+                Complaint_ID = id,
+                Text = model.Text,
+                User_ID = int.Parse(HttpContext.User.Identities.First().Claims.First(x => x.Type.Contains("nameidenfifier")).Value),
+                AddedAt = DateTime.UtcNow
+            };
+            _context.Comment.Add(comment);
+            var changes = await _context.SaveChangesAsync();
+            #endregion
+
+            if (changes > 0)
+            {
+                var user = _context.AppUser.Find(model.User_ID);
+                if (user is null)
+                    return BadRequest();
+                var commentResponse = new CommentResponseDTO()
+                {
+                    Complaint_ID = id,
+                    Text = model.Text,
+                    User_ID = model.User_ID,
+                    UserName = User.Identity!.Name,
+                    AddedAt = DateTime.UtcNow
+                };
+                //var commentResponse = JsonConvert.DeserializeObject<CommentResponseDTO>(JsonConvert.SerializeObject(comment));
+                var paged = PagedList<CommentResponseDTO>.Create((new List<CommentResponseDTO> { commentResponse! }).AsQueryable(), 1, 1);
+                return new PagedListResponse<CommentResponseDTO>(
+                    paged,
+                    (HttpContext.GetEndpoint() as RouteEndpoint)!.RoutePattern.RawText!);
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+        else
+        {
+            return BadRequest();
+        }
     }
 
     [HttpGet]
     [ResponseCache(CacheProfileName = "Any-60")]
-    public async Task<ActionResult<PagedListResponse<QuejaResponseDTO>>> GetAll([FromQuery] QuejaRequestDTO input)
+    public async Task<ActionResult<PagedListResponse<QuejaResponseDTO>>> GetAll(
+        [FromQuery] QuejaRequestDTO input)
     {
-        if (_quejas is null)
-        {
-            _quejas = JsonConvert.DeserializeObject<List<Queja>>(System.IO.File.ReadAllText(@"./Back/Data/complaints.json"))!;
-        }
-
-        //IEnumerable<int> category_ID_list = null!;
-        //try
+        #region WithFiles
+        //if (_quejas is null)
         //{
-        //    if (input.Category_IDs is not null)
-        //    {
-        //        category_ID_list = input.Category_IDs.Split(",").ToList().Select(int.Parse);
-        //        var validCIds = await _context.Category.Select(c => c.Category_ID).ToListAsync();
-        //        category_ID_list.All(c => validCIds.Contains(c));
-        //        query = query.Where(q => q.Category_ID == input.Category_IDs);
-        //    }
-        //}
-        //catch (Exception ex)
-        //{
-        //    return UnprocessableEntity(ex);
+        //    _quejas = JsonConvert.DeserializeObject<List<Queja>>(System.IO.File.ReadAllText(@"./Back/Data/complaints.json"))!;
         //}
 
-        #region SQLServer
-        //var query = _context.Queja.AsQueryable();
-        //var count = await query.CountAsync();
+        //var theseQuejas = _quejas.AsQueryable();
         //if (input.Category_ID is not null)
-        //    query = query.Where(q => q.Category_ID == input.Category_ID);
+        //    theseQuejas = theseQuejas.Where(q => q.Category_ID == input.Category_ID);
         //if (input.District_ID is not null)
-        //    query = query.Where(q => q.District_ID == input.District_ID);
+        //    theseQuejas = theseQuejas.Where(q => q.District_ID == input.District_ID);
         //if (!string.IsNullOrEmpty(input.FilterQuery))
-        //    query = query.Where(q => q.Title.Contains(input.FilterQuery));
-
-        //var recordCount = await query.CountAsync();
-        //query = query.OrderBy($"{input.SortColumn} {input.SortOrder}");
+        //    theseQuejas = theseQuejas.Where(q => q.Title.Contains(input.FilterQuery));
         #endregion
 
-        var theseQuejas = _quejas.AsQueryable();
-        if (input.Category_ID is not null)
-            theseQuejas = theseQuejas.Where(q => q.Category_ID == input.Category_ID);
-        if (input.District_ID is not null)
-            theseQuejas = theseQuejas.Where(q => q.District_ID == input.District_ID);
-        if (!string.IsNullOrEmpty(input.FilterQuery))
-            theseQuejas = theseQuejas.Where(q => q.Title.Contains(input.FilterQuery));
+        #region SQLServer
+        var query = _context.Queja.AsQueryable();
 
-        var data = theseQuejas.Select(q => new QuejaResponseDTO
-        {
-            Complaint_ID = q.Complaint_ID,
-            Text = q.Text,
-            Title = q.Title,
-            PhotoAdress = q.PhotoAdress,
-            VideoAddress = q.VideoAddress,
-            District_Name = GetDistrictName(q.District_ID),
-            UserName = GetUserName(q.User_ID),
-            Category_Name = GetCategoryName(q.Category_ID)
-        });
-        var recordCount = _quejas.Count();
+        if (input.Category_ID is not null)
+            query = query.Where(q => q.Category_ID == input.Category_ID);
+        if (input.District_ID is not null)
+            query = query.Where(q => q.District_ID == input.District_ID);
+        if (!string.IsNullOrEmpty(input.FilterQuery))
+            query = query.Where(q => q.Title.Contains(input.FilterQuery));
+
+        var recordCount = await query.CountAsync();
+        query = query.OrderBy($"{input.SortColumn} {input.SortOrder}");
+        #endregion
+
+
+        var data = query
+            .Include(q => q.Category)
+            .Include(q => q.District)
+            .Include(q => q.User)
+            .Select(q => new QuejaResponseDTO
+            {
+                Complaint_ID = q.Complaint_ID,
+                Text = q.Text,
+                Title = q.Title,
+                PhotoAdress = q.PhotoAdress,
+                VideoAddress = q.VideoAddress,
+                District_Name = q.District.Name,
+                UserName = q.User.Name,
+                Category_Name = q.Category.Name,
+                Address = q.Address,
+                CreatedAt = q.CreatedAt
+            });
+
         if (recordCount > 0)
         {
             try
             {
-                //var quejaResponse = JsonConvert.DeserializeObject<List<QuejaResponseDTO>>(JsonConvert.SerializeObject(_quejas));
                 var paged = PagedList<QuejaResponseDTO>.Create(data!.AsQueryable(), input.PageIndex, input.PageSize);
                 return new PagedListResponse<QuejaResponseDTO>(
                     paged,
@@ -168,66 +238,120 @@ public class QuejasController : ControllerBase
         else { return NoContent(); }
     }
 
-    private string? GetCategoryName(int category_ID)
+    [HttpGet]
+    [Route("{id}")]
+    [ResponseCache(CacheProfileName = "Any-60")]
+    public async Task<ActionResult<PagedListResponse<QuejaResponseDTO>>> GetById(int id)
     {
-        if (_categories is null)
+        #region WithFiles
+        //if (_quejas is null)
+        //{
+        //    _quejas = JsonConvert.DeserializeObject<List<Queja>>(System.IO.File.ReadAllText(@"./Back/Data/complaints.json"))!;
+        //}
+
+        //var laQueja = await _quejas.AsQueryable().Where(q => q.Complaint_ID == id).FirstOrDefaultAsync();
+        #endregion
+
+        #region SQLServer
+        var query = _context.Queja.Where(q => q.Complaint_ID == id);
+        var data = query
+        .Include(q => q.Category)
+        .Include(q => q.District)
+        .Include(q => q.User)
+        .Select(q => new QuejaResponseDTO
         {
-            _categories = JsonConvert.DeserializeObject<List<Category>>(System.IO.File.ReadAllText(@"./Back/Data/categories.json"))!;
+            Complaint_ID = q.Complaint_ID,
+            Text = q.Text,
+            Title = q.Title,
+            PhotoAdress = q.PhotoAdress,
+            VideoAddress = q.VideoAddress,
+            District_Name = q.District.Name,
+            UserName = q.User.Name,
+            Category_Name = q.Category.Name
+        });
+        #endregion
+
+
+        if (await data.CountAsync() > 0)
+        {
+            try
+            {
+                var paged = PagedList<QuejaResponseDTO>.Create(data, 1, 1);
+                return new PagedListResponse<QuejaResponseDTO>(
+                    paged,
+                    (HttpContext.GetEndpoint() as RouteEndpoint)!.RoutePattern.RawText!);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.InnerException);
+            }
         }
-        return _categories.Where(c => c.Category_ID == category_ID).FirstOrDefault() is not null
-            ? _categories.Where(c => c.Category_ID == category_ID).FirstOrDefault()!.Name
-            : null;
+        else { return NoContent(); }
     }
 
-    private string? GetDistrictName(int district_ID)
-    {
-        if (_districts is null)
-        {
-            _districts = JsonConvert.DeserializeObject<List<District>>(System.IO.File.ReadAllText(@"./Back/Data/districts.json"))!;
-        }
-        return _districts.Where(d => d.District_ID == district_ID).FirstOrDefault() is not null
-            ? _districts.Where(d => d.District_ID == district_ID).FirstOrDefault()!.Name
-            : null;
-    }
 
     [HttpPost]
     [ResponseCache(CacheProfileName = "NoCache")]
-    public async Task<ActionResult<PagedListResponse<QuejaDTO>>> Post([FromQuery] QuejaDTO model)
+    public async Task<ActionResult<PagedListResponse<QuejaResponseDTO>>> Post([FromQuery] QuejaPostDTO model)
     {
         if (ModelState.IsValid)
         {
-            if (_quejas is null)
-            {
-                _quejas = JsonConvert.DeserializeObject<List<Queja>>(System.IO.File.ReadAllText(@"./Back/Data/complaints.json"))!;
-            }
+
             //IFormFile? imageFile = Request.Form.Files[0] ?? null;
             //IFormFile? videoFile = Request.Form.Files[1] ?? null;
 
             // TODO : procesar los archivos y para poder guardar su dirección
-            Queja queja = new()
-            {
-                Category_ID = model.Category_ID,
-                Text = model.Text,
-                Title = model.Title,
-                User_ID = model.User_ID,
-                // TODO
-                //VideoAddress = model.VideoAddress,
-                //PhotoAdress = model.PhotoAdress,
-                District_ID = model.District_ID,
-                CreatedAt = DateTime.Now
-            };
-            #region SQLServer
-            //_context.Queja.Add(queja);
-            //int changes = await _context.SaveChangesAsync();
+            #region WithFile
+            //if (_quejas is null)
+            //{
+            //    _quejas = JsonConvert.DeserializeObject<List<Queja>>(System.IO.File.ReadAllText(@"./Back/Data/complaints.json"))!;
+            //}
+
+            //Queja queja = new()
+            //{
+            //    Category_ID = model.Category_ID,
+            //    Text = model.Text,
+            //    Title = model.Title,
+            //    User_ID = model.User_ID,
+            //    // TODO
+            //    //VideoAddress = model.VideoAddress,
+            //    //PhotoAdress = model.PhotoAdress,
+            //    District_ID = model.District_ID,
+            //    CreatedAt = DateTime.Now
+            //};
+            //_quejas.Add(queja);
             #endregion
 
-            _quejas.Add(queja);
-            int changes = 1;
+            #region SQLServer
+            var uploadResult = new ImageUploadResult();
+            IFormFile? file = model.media;
+            // si lo guardado es nulo y se subió archivo o simplemente si se subió archivo
+            if (file is not null)
+            {
+
+                uploadResult = await _cloudinaryService.AddPhotoAsync(file!);
+                if (uploadResult.Error is not null)
+                {
+                    return BadRequest(uploadResult.Error.Message);
+                }
+            }
+            var laQueja = new Queja()
+            {
+                Category_ID = model.Category_ID,
+                District_ID = model.District_ID,
+                Text = model.Text,
+                Title = model.Title,
+                PhotoAdress = "http://res.cloudinary" + uploadResult.SecureUrl.AbsolutePath,
+                User_ID = model.User_ID//preguntar a DnTo,
+            };
+            #endregion
+            await _context.Queja.AddAsync(laQueja);
+            int changes = _context.SaveChanges();
             if (changes > 0)
             {
-                var laqueja = JsonConvert.DeserializeObject<QuejaDTO>(JsonConvert.SerializeObject(queja));
-                var paged = PagedList<QuejaDTO>.Create((new List<QuejaDTO> { laqueja! }).AsQueryable(), 1, 1);
-                return new PagedListResponse<QuejaDTO>(paged, (HttpContext.GetEndpoint() as RouteEndpoint)!.RoutePattern.RawText!);
+                var data = JsonConvert.DeserializeObject<QuejaResponseDTO>(JsonConvert.SerializeObject(laQueja));
+                var paged = PagedList<QuejaResponseDTO>.Create((new List<QuejaResponseDTO> { data! }).AsQueryable(), 1, 1);
+                return new PagedListResponse<QuejaResponseDTO>(paged, (HttpContext.GetEndpoint() as RouteEndpoint)!.RoutePattern.RawText!);
             }
             else
             {
@@ -241,5 +365,76 @@ public class QuejasController : ControllerBase
         }
     }
 
+    [HttpPatch]
+    [Route("{id}")]
+    [ResponseCache(CacheProfileName = "NoCache")]
+    public async Task<ActionResult<PagedListResponse<QuejaDTO>>> UpdateQueja(
+        [FromQuery] QuejaDTO model,
+        int id)
+    {
+        if (ModelState.IsValid)
+        {
+            //verificar que el id usuario sea del que crea el comentario cuando haya login
+            #region WithFiles
+            //if (_comments is null)
+            //{
+            //    _comments = JsonConvert.DeserializeObject<List<Comment>>(System.IO.File.ReadAllText(@"./Back/Data/comments.json"))!;
+            //}
 
+            //var comment = new Comment()
+            //{
+            //    Text = model.Text,
+            //    User_ID = model.User_ID,
+            //    Complaint_ID = model.Complaint_ID,
+            //    AddedAt = DateTime.Now
+            //};
+            //_comments.Add(comment);
+            //int changes = 1;
+            #endregion
+            
+            #region SQLServer
+            var laQueja = _context.Queja.Find(id);
+            if (laQueja == null)
+                return NotFound();
+            var uploadResult = new ImageUploadResult();
+            IFormFile? file = model.media;
+            // si lo guardado es nulo y se subió archivo o simplemente si se subió archivo
+            if ((laQueja.PhotoAdress is null && file is not null) || file is not null)
+            {
+               
+                uploadResult = await _cloudinaryService.AddPhotoAsync(file!);
+                if (uploadResult.Error is not null)
+                {
+                    return BadRequest(uploadResult.Error.Message);
+                }
+            }
+           
+            laQueja.Text = model.Text ?? laQueja.Text;
+            laQueja.District_ID = model.District_ID ?? laQueja.District_ID;
+            laQueja.Category_ID = model.Category_ID ?? laQueja.Category_ID;
+            laQueja.User_ID = model.User_ID ?? laQueja.User_ID;
+            laQueja.Title = model.Title ?? laQueja.Title;
+            laQueja.PhotoAdress = uploadResult.SecureUrl is not null
+                ? "http://res.cloudinary" + uploadResult.SecureUrl.AbsolutePath
+                : laQueja.PhotoAdress;
+            int changes = _context.SaveChanges();
+            #endregion
+            if (changes > 0)
+            {
+                var commentResponse = JsonConvert.DeserializeObject<QuejaDTO>(JsonConvert.SerializeObject(laQueja));
+                var paged = PagedList<QuejaDTO>.Create((new List<QuejaDTO> { commentResponse! }).AsQueryable(), 1, 1);
+                return new PagedListResponse<QuejaDTO>(
+                    paged,
+                    (HttpContext.GetEndpoint() as RouteEndpoint)!.RoutePattern.RawText!);
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+        else
+        {
+            return BadRequest();
+        }
+    }
 }
