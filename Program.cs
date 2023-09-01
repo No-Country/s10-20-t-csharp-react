@@ -1,10 +1,13 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using quejapp.Data;
-using s10.Back.Data;
+using s10.Back.Data.IRepositories;
+using s10.Back.Data.Repositories;
+using s10.Back.Handler;
 using s10.Back.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,10 +15,15 @@ var builder = WebApplication.CreateBuilder(args);
 
 //builder.Services.AddDbContext<Context>(
 //   options => options.UseSqlServer(builder.Configuration.GetConnectionString("s10")));
-builder.Services.AddDbContext<ApplicationDbContext>(
+builder.Services.AddDbContext<RedCoContext>(
    options => options.UseSqlServer(builder.Configuration.GetConnectionString("s10")));
 
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICloudinaryService, CloudinaryService>();
+
+//var automapper = new MapperConfiguration(item => item.AddProfile(new AutoMapperHandler()));
+//IMapper mapper = automapper.CreateMapper();
+//builder.Services.AddSingleton(mapper);
 
 #region Auth
 
@@ -90,7 +98,7 @@ builder.Services.AddSwaggerGen(option =>
     });
 });
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
+builder.Services.AddDbContext<RedCoContext>(options =>
     //options.UseSqlServer(builder.Configuration["SqlServer:ConnectionString"]
     options.UseSqlServer(builder.Configuration["ConnectionStrings:S10"]
     ));

@@ -14,6 +14,7 @@ public class AppUser
     public string Name { get; set; } = string.Empty;    
     public string Email { get; set; } = string.Empty;
     public string Address { get; set; } = string.Empty;
+    public string ProfilePicAddress { get; set; } = string.Empty;
     [JsonIgnore]
     public ICollection<Comment> Comments { get; } = new List<Comment>();
     [JsonIgnore]

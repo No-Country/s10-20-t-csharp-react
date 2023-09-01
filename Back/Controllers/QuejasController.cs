@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 using quejapp.Data;
 using quejapp.DTO;
 using quejapp.Models;
-using s10.Back.Data;
+using s10.Back.Data.IRepositories;
 using s10.Back.DTO;
 using s10.Back.Services;
 using System.Data;
@@ -24,7 +24,7 @@ namespace quejapp.Controllers;
 public class QuejasController : ControllerBase
 {
     private readonly ILogger<QuejasController> _logger;
-    private readonly ApplicationDbContext _context;
+    private readonly RedCoContext _context;
     // unit of work + repository
     private readonly ICloudinaryService _cloudinaryService;
     private List<Comment> _comments;
@@ -33,7 +33,7 @@ public class QuejasController : ControllerBase
     private List<AppUser> _users;
     private List<District> _districts;
 
-    public QuejasController(ILogger<QuejasController> logger, ApplicationDbContext context, ICloudinaryService cloudinaryService)
+    public QuejasController(ILogger<QuejasController> logger, RedCoContext context, ICloudinaryService cloudinaryService)
     {
         _logger = logger;
         _context = context;
@@ -82,6 +82,7 @@ public class QuejasController : ControllerBase
                     User_ID = c.User_ID, //alguien podría queren en vez del id su nombre de usuario
                     Complaint_ID = c.Complaint_ID,
                     UserName = c.User!.Name,
+                    UserPhoto = c.User.ProfilePicAddress,
                     AddedAt = c.AddedAt,
                 });
 
@@ -217,6 +218,7 @@ public class QuejasController : ControllerBase
                 District_Name = q.District.Name,
                 UserName = q.User.Name,
                 Category_Name = q.Category.Name,
+                UserPhoto = q.User.ProfilePicAddress,
                 Address = q.Address,
                 CreatedAt = q.CreatedAt
             });

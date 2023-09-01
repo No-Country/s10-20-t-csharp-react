@@ -11,7 +11,7 @@ using quejapp.Data;
 
 namespace s10.Migrations
 {
-    [DbContext(typeof(ApplicationDbContext))]
+    [DbContext(typeof(RedCoContext))]
     [Migration("20230901021031_AddingIndexEmail")]
     partial class AddingIndexEmail
     {

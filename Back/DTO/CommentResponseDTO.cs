@@ -9,6 +9,7 @@ namespace quejapp.DTO
         public int Complaint_ID { get; set; }
         public int? User_ID { get; set; } // eliminable cuando haya login
         public string? UserName { get; set; }
+        public string? UserPhoto { get; set; }
         public DateTime AddedAt { get; set; }
     }
 }

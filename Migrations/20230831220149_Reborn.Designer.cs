@@ -11,7 +11,7 @@ using quejapp.Data;
 
 namespace s10.Migrations
 {
-    [DbContext(typeof(ApplicationDbContext))]
+    [DbContext(typeof(RedCoContext))]
     [Migration("20230831220149_Reborn")]
     partial class Reborn
     {

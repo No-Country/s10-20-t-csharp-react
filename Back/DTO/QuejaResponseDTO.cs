@@ -18,6 +18,7 @@ namespace quejapp.DTO
         public string? Category_Name { get; set; }
         //public int? User_ID { get; set; } // se requiere joints
         public string? UserName { get; set; }
+        public string? UserPhoto { get; set; }
         public DateTime CreatedAt { get; set; }       
     }
 }

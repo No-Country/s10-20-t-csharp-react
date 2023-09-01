@@ -1,11 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Linq.Dynamic.Core;
+﻿using Microsoft.AspNetCore.Mvc;
 using quejapp.Data;
 using quejapp.DTO;
 using quejapp.Models;
 using Newtonsoft.Json;
+using s10.Back.Data.Repositories;
 
 namespace quejapp.Controllers;
 
@@ -14,10 +12,10 @@ namespace quejapp.Controllers;
 public class CategoriesController : ControllerBase
 {   
     private readonly ILogger<CategoriesController> _logger;
-    private readonly ApplicationDbContext _context;
+    private readonly RedCoContext _context;
     private List<Category> _categories;
 
-    public CategoriesController(ILogger<CategoriesController> logger, ApplicationDbContext context)
+    public CategoriesController(ILogger<CategoriesController> logger, RedCoContext context)
     {        
         _logger = logger;
         _context = context;
@@ -25,15 +23,15 @@ public class CategoriesController : ControllerBase
 
     [HttpGet]
     [ResponseCache(CacheProfileName = "Any-60")]
-    public async Task<PagedListResponse<Category>> GetAll([FromQuery] RequestDTO<CategoryDTO> input) // la especialización en CategoryDTO se usa solo para saber que campos, siendo estos subcampos del modelo, están disponibles para buscar u ordenar
+    public async Task<PagedListResponse<CategoryDTO>> GetAll([FromQuery] RequestDTO<CategoryDTO> input) // la especialización en CategoryDTO se usa solo para saber que campos, siendo estos subcampos del modelo, están disponibles para buscar u ordenar
     {
         #region SQLServer
-        var query = _context.Category.AsQueryable();
-        if (!string.IsNullOrEmpty(input.FilterQuery))
-            query = query.Where(d => d.Name.Contains(input.FilterQuery));
+        //var query = _context.Category.AsQueryable();
+        //if (!string.IsNullOrEmpty(input.FilterQuery))
+        //    query = query.Where(d => d.Name.Contains(input.FilterQuery));
 
-        query = query.OrderBy($"{input.SortColumn} {input.SortOrder}");
-        int recordCount = await query.CountAsync();
+        //query = query.OrderBy($"{input.SortColumn} {input.SortOrder}");
+        //int recordCount = await query.CountAsync();
         #endregion
 
         #region WithFiles
@@ -57,21 +55,23 @@ public class CategoriesController : ControllerBase
         //});
         //var paged = PagedList<Category>.Create(theseCategories.AsQueryable(), input.PageIndex, input.PageSize);
         #endregion
-        var paged = PagedList<Category>.Create(query, input.PageIndex, input.PageSize);
-        return new PagedListResponse<Category>(
-            paged, 
+
+        #region WithUnitOfWorkPattern
+        var unitOfWork = new UnitOfWork(_context);
+        var categoriesData = unitOfWork.Categories.GetPagedCategories(input); //debería se async aquí??
+        await unitOfWork.Complete();
+        #endregion
+
+        return new PagedListResponse<CategoryDTO>(
+            categoriesData,
             (HttpContext.GetEndpoint() as RouteEndpoint)!.RoutePattern.RawText! /*funciona... pero a que costo?*/);
-       
+
     }
 
     [HttpGet("{id}")]
     [ResponseCache(CacheProfileName = "Any-60")]
-    public async Task<ActionResult<PagedListResponse<Category>>> GetById(int id)
+    public async Task<ActionResult<PagedListResponse<CategoryDTO>>> GetById(int id)
     {
-        #region SQLServer
-        var categoryResult = await _context.Category.FindAsync(id);// usar find con sql server
-        #endregion
-
         #region WithFiles
         //if (_categories is null)
         //{
@@ -80,19 +80,26 @@ public class CategoriesController : ControllerBase
         //var theCategory = _categories.Where(c => c.Category_ID == id).FirstOrDefault();
 
         //if (theCategory is not null)
-            #endregion
+        #endregion
+
+        #region SQLServer
+        //var categoryResult = await _context.Category.FindAsync(id);// usar find con sql server
+        #endregion
+        #region WithUnitOfWorkPattern
+        var unitOfWork = new UnitOfWork(_context);
+        var categoryResult = unitOfWork.Categories.GetPaged(id);
+        await unitOfWork.Complete();
+        #endregion
         if (categoryResult is not null)
-        {
-           // tengo que crear una lista de un elemento para poder tener,luego de transformarse, un queryable
-            var paged = PagedList<Category>.Create((new List<Category> { categoryResult }).AsQueryable(), 1, 1); // como es pk solo Debería ser como máximo 1 página de 1 elemento y como mínimo not found o 0
-            return new PagedListResponse<Category>(
-                paged,
+        {                    
+            return new PagedListResponse<CategoryDTO>(
+                categoryResult,
                 (HttpContext.GetEndpoint() as RouteEndpoint)!.RoutePattern.RawText! /*funciona... pero a que costo?*/);
         }
         else
         {
             return NotFound();
         }
-        
+
     }
 }

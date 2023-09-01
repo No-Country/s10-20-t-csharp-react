@@ -19,9 +19,9 @@ public class CommentsController : ControllerBase
 {   
 
     private readonly ILogger<CommentsController> _logger;
-    private readonly ApplicationDbContext _context;
+    private readonly RedCoContext _context;
     private List<Comment> _comments;
-    public CommentsController(ILogger<CommentsController> logger, ApplicationDbContext context)
+    public CommentsController(ILogger<CommentsController> logger, RedCoContext context)
     {
         _logger = logger;
         _context = context;       

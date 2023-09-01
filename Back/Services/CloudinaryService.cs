@@ -2,7 +2,7 @@
 using CloudinaryDotNet.Actions;
 using dotenv.net;
 using Microsoft.Extensions.Options;
-using s10.Back.Data;
+using s10.Back.Data.IRepositories;
 using System.Net.WebSockets;
 
 namespace s10.Back.Services

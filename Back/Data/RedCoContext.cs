@@ -6,9 +6,9 @@ using System.Text.RegularExpressions;
 
 namespace quejapp.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class RedCoContext : DbContext
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+        public RedCoContext(DbContextOptions<RedCoContext> options) : base(options)
         { }
         public virtual DbSet<Category> Category { get; set; }
         public virtual DbSet<Comment> Comment { get; set; }
