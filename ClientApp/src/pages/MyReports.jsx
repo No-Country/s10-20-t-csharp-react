@@ -1,7 +1,11 @@
 import React from 'react'
 import myReportsImg from '../assets/img_myreports.png'
+import Modal from '../components/Modal'
+import { useState } from 'react'
 
 const MyReports = () => {
+    const [isOpen, setIsOpen] = useState(false)
+
     return (
     <>
         <div className="flex w-full items-start justify-center mt-20">
@@ -14,7 +18,7 @@ const MyReports = () => {
                 <p className="text-xl">Tu reporte ayuda a mantener estos espacios en optimas condiciones.</p>
             </div>
             <div className="w-[25%] flex flex-col gap-4 items-center">
-                <button className=" bg-[#1E375680] w-[60%] p-5 rounded-full text-white text-xl">Nuevo Reporte</button>
+                <button className=" bg-[#1E375680] w-[60%] p-5 rounded-full text-white text-xl" onClick={() => setIsOpen(!isOpen) }>Nuevo Reporte</button>
                 <button className="bg-[#1E3756] w-[60%] p-5 rounded-full text-white text-xl">Mis Reportes</button>
             </div>
         </div>
@@ -23,8 +27,10 @@ const MyReports = () => {
                 <img className="ms-20" src={myReportsImg} alt="Imagen" />
             </div>
         </div>
+        {
+            isOpen ? <Modal/> : null
+        }
     </>
-    
     )
 }
 
