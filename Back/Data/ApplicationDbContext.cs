@@ -15,6 +15,7 @@ namespace quejapp.Data
         public virtual DbSet<District> District { get; set; }
         public virtual DbSet<Locality> Locality { get; set; }
         public virtual DbSet<Queja> Queja { get; set; }
+        public virtual DbSet<AppUser> Usuarios { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
