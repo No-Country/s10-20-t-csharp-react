@@ -4,14 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using quejapp.Data;
-using s10.Back.Data;
+
 
 
 var builder = WebApplication.CreateBuilder(args);
 
-
-builder.Services.AddDbContext<Context>(
-   options => options.UseSqlServer(builder.Configuration.GetConnectionString("s10")));
 
 
 #region Auth
