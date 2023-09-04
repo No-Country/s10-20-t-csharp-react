@@ -5,14 +5,14 @@ using Microsoft.Extensions.Options;
 using s10.Back.Data.IRepositories;
 using System.Net.WebSockets;
 
-namespace s10.Back.Services
+namespace s10.Back.Handler
 {
-    public class CloudinaryService : ICloudinaryService
+    public class CloudinaryHelper : ICloudinaryService
     {
 
         private readonly Cloudinary _cloudinary;
 
-        public CloudinaryService()
+        public CloudinaryHelper()
         {
             DotEnv.Load(options: new DotEnvOptions(probeForEnv: true));
             _cloudinary = new Cloudinary(Environment.GetEnvironmentVariable("CLOUDINARY_URL"));
@@ -22,13 +22,13 @@ namespace s10.Back.Services
         public async Task<ImageUploadResult> AddPhotoAsync(IFormFile file)
         {
             var uploadResult = new ImageUploadResult();
-            if(file.Length > 0)
+            if (file.Length > 0)
             {
                 using var stream = file.OpenReadStream();
                 var uploadParam = new ImageUploadParams()
                 {
                     File = new FileDescription(file.FileName, stream),
-                    
+
                     // se necesitan transformations
                 };
                 uploadResult = await _cloudinary.UploadAsync(uploadParam);
@@ -36,8 +36,9 @@ namespace s10.Back.Services
             return uploadResult;
         }
 
-        public async Task<DeletionResult> DeletePhotoAsync(string publicId)
+        public async Task<DeletionResult> DeletePhotoAsync(string wholeUrlPath)
         {
+            var publicId = wholeUrlPath.Split('/')[6].Split(".")[0];
             var deleteParams = new DeletionParams(publicId);
             var result = await _cloudinary.DestroyAsync(deleteParams);
             return result;

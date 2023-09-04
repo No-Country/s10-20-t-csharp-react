@@ -4,11 +4,13 @@ using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using NetTopologySuite;
+using NetTopologySuite.Geometries;
 using quejapp.Data;
 using s10.Back.Data.IRepositories;
 using s10.Back.Data.Repositories;
 using s10.Back.Handler;
-using s10.Back.Services;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,10 +18,12 @@ var builder = WebApplication.CreateBuilder(args);
 //builder.Services.AddDbContext<Context>(
 //   options => options.UseSqlServer(builder.Configuration.GetConnectionString("s10")));
 builder.Services.AddDbContext<RedCoContext>(
-   options => options.UseSqlServer(builder.Configuration.GetConnectionString("s10")));
+   options => 
+       options.UseSqlServer(builder.Configuration.GetConnectionString("s10"),
+    sqlServerOptions => sqlServerOptions.UseNetTopologySuite()    
+   ));
 
-builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
-builder.Services.AddScoped<ICloudinaryService, CloudinaryService>();
+builder.Services.AddScoped<ICloudinaryService, CloudinaryHelper>();
 
 //var automapper = new MapperConfiguration(item => item.AddProfile(new AutoMapperHandler()));
 //IMapper mapper = automapper.CreateMapper();
@@ -98,11 +102,9 @@ builder.Services.AddSwaggerGen(option =>
     });
 });
 
-builder.Services.AddDbContext<RedCoContext>(options =>
-    //options.UseSqlServer(builder.Configuration["SqlServer:ConnectionString"]
-    options.UseSqlServer(builder.Configuration["ConnectionStrings:S10"]
-    ));
-
+//builder.Services.AddAutoMapper(typeof(Program).Assembly);
+builder.Services.AddSingleton<GeometryFactory>(
+    NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326));
 
 builder.Services.AddAuthorization();
 

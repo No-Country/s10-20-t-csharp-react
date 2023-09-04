@@ -13,7 +13,7 @@ public class CategoriesController : ControllerBase
 {   
     private readonly ILogger<CategoriesController> _logger;
     private readonly RedCoContext _context;
-    private List<Category> _categories;
+    //private List<Category> _categories;
 
     public CategoriesController(ILogger<CategoriesController> logger, RedCoContext context)
     {        
@@ -22,8 +22,9 @@ public class CategoriesController : ControllerBase
     }
 
     [HttpGet]
-    [ResponseCache(CacheProfileName = "Any-60")]
-    public async Task<PagedListResponse<CategoryDTO>> GetAll([FromQuery] RequestDTO<CategoryDTO> input) // la especialización en CategoryDTO se usa solo para saber que campos, siendo estos subcampos del modelo, están disponibles para buscar u ordenar
+    [ResponseCache(CacheProfileName = "NoCache")]
+    public async Task<ActionResult<PagedListResponse<CategoryDTO>>> GetAll(
+        [FromQuery] RequestDTO<CategoryDTO> input) // la especialización en CategoryDTO se usa solo para saber que campos, siendo estos subcampos del modelo, están disponibles para buscar u ordenar
     {
         #region SQLServer
         //var query = _context.Category.AsQueryable();
@@ -56,20 +57,26 @@ public class CategoriesController : ControllerBase
         //var paged = PagedList<Category>.Create(theseCategories.AsQueryable(), input.PageIndex, input.PageSize);
         #endregion
 
-        #region WithUnitOfWorkPattern
-        var unitOfWork = new UnitOfWork(_context);
-        var categoriesData = unitOfWork.Categories.GetPagedCategories(input); //debería se async aquí??
-        await unitOfWork.Complete();
-        #endregion
+        if (ModelState.IsValid)
+        {
+            #region WithUnitOfWorkPattern
+            var unitOfWork = new UnitOfWork(_context);
+            var categoriesData = unitOfWork.Categories.GetPagedCategories(input); //debería se async aquí??
+            await unitOfWork.Complete();
+            #endregion
 
-        return new PagedListResponse<CategoryDTO>(
-            categoriesData,
-            (HttpContext.GetEndpoint() as RouteEndpoint)!.RoutePattern.RawText! /*funciona... pero a que costo?*/);
-
+            return new PagedListResponse<CategoryDTO>(
+                categoriesData,
+                (HttpContext.GetEndpoint() as RouteEndpoint)!.RoutePattern.RawText! /*funciona... pero a que costo?*/);
+        }
+        else
+        {
+            return BadRequest();
+        }
     }
 
     [HttpGet("{id}")]
-    [ResponseCache(CacheProfileName = "Any-60")]
+    [ResponseCache(CacheProfileName = "NoCache")]
     public async Task<ActionResult<PagedListResponse<CategoryDTO>>> GetById(int id)
     {
         #region WithFiles

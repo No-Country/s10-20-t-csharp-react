@@ -27,8 +27,8 @@ public class CommentsController : ControllerBase
         _context = context;       
     }          
 
-    //[Authorize(Roles = RoleNames.Administrator)] // solo el admin o moderador podría eliminar un comentario
     [HttpDelete("{id}")]
+    [Authorize]
     [ResponseCache(CacheProfileName = "NoCache")]
     public async Task<ActionResult<PagedListResponse<CommentResponseDTO>>> Delete(int id)
     {

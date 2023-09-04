@@ -44,11 +44,6 @@ namespace s10.Back.Data.Repositories
         public void Remove(T entity)
         {
             Context.Set<T>().Remove(entity);
-        }
-
-        public void Upsert(T entity)
-        {
-            throw new NotImplementedException();
-        }
+        }      
     }
 }

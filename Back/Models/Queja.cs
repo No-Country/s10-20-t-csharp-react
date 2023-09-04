@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
+using NetTopologySuite.Geometries;
 
 namespace quejapp.Models;
 
@@ -20,6 +21,8 @@ public class Queja
     public int Category_ID { get; set; }
     [ForeignKey(name: "User")]
     public int? User_ID { get; set; }
+    public Point? Location { get; set; } = null!;
+    public bool? IsAnonymous { get; set; }
     public DateTime CreatedAt { get; set; }
     public District District { get; set; } = null!;
     public Category Category { get; set; } = null!;
