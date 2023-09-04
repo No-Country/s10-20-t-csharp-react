@@ -10,6 +10,7 @@ using static System.Net.Mime.MediaTypeNames;
 using System.Xml.Linq;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using Newtonsoft.Json;
+using s10.Back.Data.Repositories;
 
 namespace quejapp.Controllers;
 
@@ -20,7 +21,7 @@ public class CommentsController : ControllerBase
 
     private readonly ILogger<CommentsController> _logger;
     private readonly RedCoContext _context;
-    private List<Comment> _comments;
+    //private List<Comment> _comments;
     public CommentsController(ILogger<CommentsController> logger, RedCoContext context)
     {
         _logger = logger;
@@ -49,20 +50,24 @@ public class CommentsController : ControllerBase
         #endregion
 
         #region SQLServer
-        var elComentario = await _context.Comment.FindAsync(id);
-        if (elComentario is null)
-            return NotFound();
+        //var elComentario = await _context.Comment.FindAsync(id);
+        //if (elComentario is null)
+        //    return NotFound();
 
-        _context.Comment.Remove(elComentario);
-        var changes = await _context.SaveChangesAsync();
+        //_context.Comment.Remove(elComentario);
+        //var changes = await _context.SaveChangesAsync();
+        #endregion
+
+        #region WithUnitOfWorkPattern
+        var unitOfWork = new UnitOfWork(_context);
+        var comment = unitOfWork.Comments.Get(id);
+        if(comment is not null)
+            unitOfWork.Comments.Remove(comment);
+        int changes = await unitOfWork.Complete();
         #endregion
         if (changes > 0)
         {
-            var commentResponse = JsonConvert.DeserializeObject<CommentResponseDTO>(JsonConvert.SerializeObject(elComentario));
-            var paged = PagedList<CommentResponseDTO>.Create((new List<CommentResponseDTO> { commentResponse! }).AsQueryable(), 1, 1);
-            return new PagedListResponse<CommentResponseDTO>(
-                paged,
-                (HttpContext.GetEndpoint() as RouteEndpoint)!.RoutePattern.RawText!);
+            return Ok();
         }
         else
         {

@@ -41,7 +41,8 @@ public class QuejasController : ControllerBase
         _cloudinaryService = cloudinaryService;
         _geometryFactory = geometryFactory;
     }
-    [HttpGet] 
+    [HttpGet]
+    [Authorize]
     [Route("{id}/comments")]
     [ResponseCache(CacheProfileName = "NoCache")]
     public async Task<ActionResult<PagedListResponse<CommentResponseDTO>>> GetCommentsByQueja(
@@ -98,7 +99,7 @@ public class QuejasController : ControllerBase
             }
             else
             {
-                return BadRequest();
+                return NotFound();
             }
         }
         else
