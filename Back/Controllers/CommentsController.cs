@@ -1,16 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Linq.Dynamic.Core;
-using quejapp.Data;
-using quejapp.DTO;
-using quejapp.Models;
-using static System.Net.Mime.MediaTypeNames;
-using System.Xml.Linq;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
-using Newtonsoft.Json;
+using s10.Back.Data;
 using s10.Back.Data.Repositories;
+using s10.Back.DTO;
 
 namespace quejapp.Controllers;
 

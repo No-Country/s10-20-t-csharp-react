@@ -1,6 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using quejapp.Data;
-using quejapp.DTO;
 using quejapp.Models;
 using System.Linq.Dynamic.Core;
 using s10.Back.Data.IRepositories;
@@ -11,21 +9,15 @@ using System.Security.Claims;
 using s10.Back.Services;
 using System.Security.Cryptography;
 using s10.Back.Handler;
+using s10.Back.DTO;
 
 namespace s10.Back.Data.Repositories;
 
 public class QuejaRepository : GenericRepository<Queja>, IQuejaRepository
 {
-    //private readonly ICloudinaryService _cloudinaryService;
-    //private readonly GeometryFactory _geometryFactory;
     public QuejaRepository(RedCoContext context )//NO hacer injección POr constructor acá
-        //ICloudinaryService cloudinaryService,
-        //GeometryFactory geometryFactory))
         : base(context)
-    {
-        //_cloudinaryService = cloudinaryService;
-        //_geometryFactory = geometryFactory;
-    }
+    { }
 
     public RedCoContext? RedCoContext
     {

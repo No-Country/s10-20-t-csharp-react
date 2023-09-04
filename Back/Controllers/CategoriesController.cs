@@ -1,11 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using quejapp.Data;
-using quejapp.DTO;
-using quejapp.Models;
-using Newtonsoft.Json;
+using s10.Back.Data;
 using s10.Back.Data.Repositories;
+using s10.Back.DTO;
 
-namespace quejapp.Controllers;
+namespace s10.Back.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -13,7 +11,6 @@ public class CategoriesController : ControllerBase
 {   
     private readonly ILogger<CategoriesController> _logger;
     private readonly RedCoContext _context;
-    //private List<Category> _categories;
 
     public CategoriesController(ILogger<CategoriesController> logger, RedCoContext context)
     {        

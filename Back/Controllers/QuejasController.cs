@@ -1,19 +1,12 @@
-﻿using AutoMapper;
-using CloudinaryDotNet;
-using CloudinaryDotNet.Actions;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication;
+﻿using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NetTopologySuite.Geometries;
-using Newtonsoft.Json;
-using quejapp.Data;
-using quejapp.DTO;
 using quejapp.Models;
+using s10.Back.Data;
 using s10.Back.Data.IRepositories;
 using s10.Back.Data.Repositories;
 using s10.Back.DTO;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq.Dynamic.Core;
 using System.Security.Claims;
 

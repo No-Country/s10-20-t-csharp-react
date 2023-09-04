@@ -1,10 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using quejapp.Data;
-using quejapp.DTO;
 using quejapp.Models;
 using System.Linq.Dynamic.Core;
 using s10.Back.Data.IRepositories;
-using System.Xml.Linq;
+using s10.Back.DTO;
 
 namespace s10.Back.Data.Repositories
 {

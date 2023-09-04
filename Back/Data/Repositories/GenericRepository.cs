@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using quejapp.Data;
 using s10.Back.Data.IRepositories;
 using System.Linq.Expressions;
 

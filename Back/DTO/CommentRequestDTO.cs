@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace quejapp.DTO;
+namespace s10.Back.DTO;
 
 public class CommentRequestDTO
 {

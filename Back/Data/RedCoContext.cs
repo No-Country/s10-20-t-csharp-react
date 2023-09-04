@@ -1,10 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using quejapp.Models;
-using System.Reflection.Emit;
-using System.Reflection.Metadata;
-using System.Text.RegularExpressions;
 
-namespace quejapp.Data
+namespace s10.Back.Data
 {
     public class RedCoContext : DbContext
     {

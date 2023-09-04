@@ -1,4 +1,4 @@
-﻿namespace quejapp.DTO
+﻿namespace s10.Back.DTO
 {
     public class QuejaDTO
     {

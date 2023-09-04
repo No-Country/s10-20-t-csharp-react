@@ -1,7 +1,4 @@
-﻿using NetTopologySuite.Geometries;
-using quejapp.Data;
-using s10.Back.Data.IRepositories;
-using s10.Back.Services;
+﻿using s10.Back.Data.IRepositories;
 
 namespace s10.Back.Data.Repositories
 {

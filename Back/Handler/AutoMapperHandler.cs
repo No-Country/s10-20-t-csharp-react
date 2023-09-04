@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using NetTopologySuite;
-using quejapp.DTO;
 using quejapp.Models;
 using s10.Back.DTO;
 

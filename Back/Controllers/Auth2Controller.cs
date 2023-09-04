@@ -2,13 +2,11 @@
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
-using System.Security.Principal;
-using quejapp.Data;
 using s10.Back.Data.Repositories;
 using quejapp.Models;
+using s10.Back.Data;
 
 namespace s10.Back.Controllers
 {

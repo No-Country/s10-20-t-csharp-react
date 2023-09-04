@@ -1,6 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using quejapp.Data;
-using quejapp.DTO;
 using quejapp.Models;
 using s10.Back.Data.IRepositories;
 using s10.Back.DTO;
@@ -9,9 +7,9 @@ namespace s10.Back.Data.Repositories
 {
     public class AppUserRespository : GenericRepository<AppUser>, IAppUserRepository
     {
-        public AppUserRespository(RedCoContext context/*, IMapper mapper*/) : base(context)
+        public AppUserRespository(RedCoContext context) : base(context)
         {
-            //_mapper = mapper;
+            
         }
 
         public RedCoContext? RedCoContext

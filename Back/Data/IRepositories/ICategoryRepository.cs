@@ -1,7 +1,6 @@
-﻿using quejapp.Data;
-using quejapp.DTO;
-using quejapp.Models;
-using System.Linq.Dynamic.Core;
+﻿using quejapp.Models;
+using s10.Back.DTO;
+using s10.BackDTO;
 
 namespace s10.Back.Data.IRepositories
 {
