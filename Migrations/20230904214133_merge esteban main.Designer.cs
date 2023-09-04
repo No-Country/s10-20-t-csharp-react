@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
-using quejapp.Data;
 using s10.Back.Data;
 
 #nullable disable
@@ -14,8 +13,8 @@ using s10.Back.Data;
 namespace s10.Migrations
 {
     [DbContext(typeof(RedCoContext))]
-    [Migration("20230902120731_AddedIsAnonymousAndLocation")]
-    partial class AddedIsAnonymousAndLocation
+    [Migration("20230904214133_merge esteban main")]
+    partial class mergeestebanmain
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -41,6 +40,14 @@ namespace s10.Migrations
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("GivenName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()

@@ -3,7 +3,6 @@ using quejapp.Models;
 using System.Linq.Dynamic.Core;
 using s10.Back.Data.IRepositories;
 using s10.Back.DTO;
-using s10.BackDTO;
 
 namespace s10.Back.Data.Repositories
 {
