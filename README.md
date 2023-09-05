@@ -33,8 +33,8 @@ En la misma se puede:
 [Link]() de la aplicación web. 
 
 [React.js]: https://img.shields.io/badge/react.js-61DAFB?style=for-the-badge&logo=react&logoColor=white
-[TailwindCSS]: https://img.shields.io/badge/react.js-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white
-[Cloudinary]: https://img.shields.io/badge/react.js-61DAFB?style=for-the-badge&logo=cloudinary&logoColor=white
+[TailwindCSS]: https://img.shields.io/badge/tailwindcss-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white
+[Cloudinary]: https://img.shields.io/badge/cloudinary-61DAFB?style=for-the-badge&logo=cloudinary&logoColor=white
 [Axios]: https://img.shields.io/badge/axios-5A29E4?style=for-the-badge&logo=axios&logoColor=white
 [ASPNET]: https://img.shields.io/badge/.net-512BD4?style=for-the-badge&logo=dotnet&logoColor=white
 [SQL Server]: https://img.shields.io/badge/sqlserver-CC2927?style=for-the-badge&logo=microsoftsqlserver&logoColor=white
