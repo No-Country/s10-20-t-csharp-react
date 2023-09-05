@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿﻿using Microsoft.AspNetCore.Mvc;
 using s10.Back.Data;
 using s10.Back.Data.Repositories;
 using s10.Back.DTO;
@@ -104,6 +104,5 @@ public class CategoriesController : ControllerBase
         {
             return NotFound();
         }
-
     }
 }

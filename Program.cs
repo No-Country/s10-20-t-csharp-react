@@ -108,6 +108,8 @@ builder.Services.AddSingleton<GeometryFactory>(
 
 builder.Services.AddAuthorization();
 
+
+builder.Services.AddAuthorization();
 builder.Services.AddCors(o =>
 {
     o.AddDefaultPolicy(policy =>
@@ -118,21 +120,25 @@ builder.Services.AddCors(o =>
 
 var app = builder.Build();
 
-app.UseStaticFiles();
+app.UseCors();
+
 app.UseSwagger();
 app.UseSwaggerUI();
-
-app.UseCors();
 app.UseHttpsRedirection();
-
+app.UseStaticFiles();
+app.UseRouting();
 app.UseAuthentication();
-//app.UseAuthorization();
+app.UseAuthorization();
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller}/{action=Index}/{id?}");
+//app.UseMvc(routes =>
+//{
+//    routes.MapRoute(
+//        name: "default",
+//        template: "{controller=Auth2}/{action=login}");
+//});
 
-app.MapControllers();
-app.UseMvc(routes =>
-{
-    routes.MapRoute(
-        name: "default",
-        template: "{controller=Auth2}/{action=login}");
-});
+app.MapFallbackToFile("index.html");
+
 app.Run();

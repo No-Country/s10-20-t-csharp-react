@@ -53,13 +53,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="ClientApp\dist\assets\imgPerro.b4176218.png" />
-    <None Remove="ClientApp\dist\assets\imgPerro2.87129688.png" />
-    <None Remove="ClientApp\dist\assets\imgPerro3.0402fb18.png" />
-    <None Remove="ClientApp\dist\assets\index.4a774a36.css" />
-    <None Remove="ClientApp\dist\assets\index.66c00ebd.js" />
-    <None Remove="ClientApp\dist\assets\Logo.b746a7c8.svg" />
-    <None Remove="ClientApp\dist\assets\perro.ce1b2faa.png" />
     <None Remove="ClientApp\dist\favicon.svg" />
     <None Remove="ClientApp\dist\index.html" />
     <None Remove="ClientApp\dist\robots.txt" />
@@ -91,7 +84,7 @@
 
     <!-- Include the newly-built files in the publish output -->
     <ItemGroup>
-      <DistFiles Include="$(SpaRoot)build\**" />
+      <DistFiles Include="$(SpaRoot)dist\**" />
       <ResolvedFileToPublish Include="@(DistFiles->'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
         <RelativePath>wwwroot\%(RecursiveDir)%(FileName)%(Extension)</RelativePath>
         <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
