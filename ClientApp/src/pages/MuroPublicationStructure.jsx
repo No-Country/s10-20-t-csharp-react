@@ -1,9 +1,16 @@
-import React from 'react'
+import React, { useState } from 'react'
 import MarkUnreadChatAltIcon from '@mui/icons-material/MarkUnreadChatAlt';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import ShareIcon from '@mui/icons-material/Share';
+import { useContext } from 'react';
+import { UserContext } from '../store/userContext';
+import axios from "axios"
 
 const MuroPublicationStructure = ({pub}) => {
+
+  const userCtx = useContext(UserContext)
+  const [commentText, setCommentText] = useState("")
+
 
   function openModalThree() {
     const modal = document.getElementById('my_modal_3');
@@ -14,7 +21,21 @@ const MuroPublicationStructure = ({pub}) => {
     const modal = document.getElementById('my_modal_4');
     modal.showModal();
   }
+     
 
+  const sendNewComment = () => { 
+    const newComment = ({ 
+      text: commentText,
+      complaint_ID: pub.complaint_ID
+    })
+    axios.post("api/Comments", newComment)
+         .then((res) => { 
+          console.log(res.data)
+         })
+         .catch((err) => { 
+          console.log(err)
+         })
+  }
   
 
   return (
@@ -64,14 +85,17 @@ const MuroPublicationStructure = ({pub}) => {
                                                     <div className='flex items-center space-x-2'>
                                                         <div className="avatar">                                                     
                                                           <div className="w-8 rounded-full">
-                                                              <img src="https://p1.pxfuel.com/preview/473/60/844/model-portrait-girl-woman.jpg" />                                               
+                                                              <img src={userCtx.profileImage}/>                                               
                                                           </div>
-                                                          <p className='ml-2 text-gray-500 text-sm'>Marisa Dinamond</p>
+                                                          <p className='ml-2 text-gray-500 text-sm'>{userCtx.userName}</p>
                                                         </div>
                                                     </div>
-                                                      <textarea className='mt-2 border border-gray-400 w-full rounded-xl text-sm text-center' placeholder='Escribi tu respuesta..'/>
+                                                      <textarea className='mt-2 border border-gray-400 w-full rounded-xl text-sm text-center' placeholder='Escribi tu respuesta..'
+                                                       onChange={(e) => setCommentText(e.target.value)}/>
                                                       <div className='flex justify-end'>
-                                                      <button className="btn bg-blue-900 text-white hover:text-blue-900 hover:bg-yellow-400 border text-xs w-18 rounded-xl">Responder</button>
+                                                         <button className="btn bg-blue-900 text-white hover:text-blue-900 hover:bg-yellow-400 border text-xs w-18 rounded-xl" onClick={() => sendNewComment(pub)}>
+                                                            Responder
+                                                          </button>
                                                       </div>
                                                   </form>
                                                 </dialog>    

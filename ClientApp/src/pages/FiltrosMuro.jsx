@@ -13,7 +13,7 @@ const FiltrosMuro = () => {
         const [searchResults, setSearchResults] = useState([])
         const navigate = useNavigate()
 
-        const searchParamPublication = () => { 
+      /*  const searchParamPublication = () => { 
           axios.get(`http://localhost:4000/getPublicationsWithParams/${searchParam}`)
               .then((res) => { 
                 console.log(res.data)
@@ -28,14 +28,14 @@ const FiltrosMuro = () => {
               .catch((err) => { 
                 console.log(err)
               })
-        }
+        }*/
 
   return (
     <div>
         <div className='mr-4'>
                         <div className='flex'>
                           <input type="text" placeholder='Search' className='bg-gray-200 border border-gray-200 rounded-lg text-center ' onChange={(e) => setSearchParam(e.target.value)}/>
-                          <div onClick={() => searchParamPublication()}>
+                          <div >
                              < SearchIcon style={{cursor: "pointer", marginLeft:"3px"}}/>
                           </div>                       
                         </div>
@@ -43,17 +43,17 @@ const FiltrosMuro = () => {
                        <div className='mt-6'>
                             <div className='flex mt-4'>
                               <input type="checkbox" className="checkbox checkbox-sm" /> 
-                              <p className='ml-2'>Streets</p>
+                              <p className='ml-2'>Aceras</p>
                             </div>
 
                             <div className='flex mt-4'>
                               <input type="checkbox" className="checkbox checkbox-sm" /> 
-                              <p className='ml-2'>Squares</p>
+                              <p className='ml-2'>Luminarias</p>
                              </div>
 
                             <div className='flex mt-4'>
                               <input type="checkbox" className="checkbox checkbox-sm" /> 
-                              <p className='ml-2'>Ligthning</p>
+                              <p className='ml-2'>Limpieza</p>
                             </div>
 
                             <div className='flex mt-4'>
