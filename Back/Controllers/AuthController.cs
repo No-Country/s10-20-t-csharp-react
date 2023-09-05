@@ -1,9 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using s10.Back.Services.Auth.Models;
-using System.Security.Claims;
 
 namespace s10.Back.Controllers
 {

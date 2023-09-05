@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace quejapp.Data;
+namespace s10.Back.Data;
 
 public class PagedList<T> : List<T>
 {

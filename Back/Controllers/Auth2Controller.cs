@@ -2,16 +2,25 @@
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
-using System.Security.Principal;
+using s10.Back.Data.Repositories;
+using quejapp.Models;
+using s10.Back.Data;
 
 namespace s10.Back.Controllers
 {
     // [Route("/")]
     public class Auth2Controller : Controller
     {
+
+        private readonly RedCoContext _context;
+
+        public Auth2Controller(RedCoContext context)
+        {
+            _context = context;
+        }
+
         public ActionResult Home()
         {
             return Ok("loggedOut");
@@ -48,6 +57,23 @@ namespace s10.Back.Controllers
                     claim.Type,
                     claim.Value
                 });
+            var posibleUser = claims.Where(c => c.Type == System.Security.Claims.ClaimTypes.Email);
+            if(posibleUser.Any())
+            {
+                var unitOfWork = new UnitOfWork(_context);
+                int changes = 0;
+                if (await unitOfWork.AppUsers.GetByEmail(posibleUser.First().Value) is null)
+                {
+                    var newUser = new AppUser()
+                    {
+                        Email = posibleUser.First().Value,
+                        Name = claims.Where(c => c.Type == ClaimTypes.Name).First().Value,
+                    };
+                    unitOfWork.AppUsers.Add(newUser);
+                    changes = await unitOfWork.Complete();
+                }
+                return Json(claims);
+            }
             return Json(claims);
         }
 

@@ -1,6 +1,6 @@
 ﻿using System.Reflection.Emit;
 
-namespace quejapp.DTO
+namespace s10.Back.DTO
 {
     public class LinkDTO
     { 
