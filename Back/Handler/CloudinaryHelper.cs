@@ -1,6 +1,5 @@
 ﻿using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
-using dotenv.net;
 using s10.Back.Data.IRepositories;
 
 namespace s10.Back.Handler
@@ -12,8 +11,7 @@ namespace s10.Back.Handler
 
         public CloudinaryHelper()
         {
-            DotEnv.Load(options: new DotEnvOptions(probeForEnv: true));
-            _cloudinary = new Cloudinary(Environment.GetEnvironmentVariable("CLOUDINARY_URL"));
+            _cloudinary = new Cloudinary("cloudinary://427996914125567:qQe4v1MexM4mNmrluGG2K41exUQ@dumwds5gm");
             _cloudinary.Api.Secure = true;
         }
 

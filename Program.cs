@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using NetTopologySuite;
 using NetTopologySuite.Geometries;
-using quejapp.Data;
+using s10.Back.Data;
 using s10.Back.Data.IRepositories;
 using s10.Back.Data.Repositories;
 using s10.Back.Handler;
