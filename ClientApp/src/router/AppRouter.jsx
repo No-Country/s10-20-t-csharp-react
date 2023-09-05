@@ -11,6 +11,7 @@ import Report from "../pages/report";
 import MyReports from "../pages/MyReports";
 import NewReport from "../pages/NewReport";
 
+
 const router = createBrowserRouter([
   {
     path: "/",

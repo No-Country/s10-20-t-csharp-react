@@ -4,6 +4,7 @@ import myReportsImg from '../assets/img_myreports.png'
 const NewReport = () => {
     return (
     <>
+        
         <div className="flex w-full items-start justify-center mt-20">
             <div className="w-[70%] flex flex-col gap-4 items-center">
                 <h1 className="text-3xl">La convivencia ciudadana y cuidar los espacios comunes es una responsabilidad colectiva.</h1>
