@@ -30,4 +30,6 @@ public class Queja
     [JsonIgnore]
     public ICollection<Comment> Comments { get; } = new List<Comment>();
 
+    public int Favorites_Count { get; set; }
+
 }
