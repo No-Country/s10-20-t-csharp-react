@@ -6,6 +6,7 @@
         IAppUserRepository AppUsers { get; }
         ICommentRepository Comments { get; }
         IQuejaRepository Quejas { get; }
+        IFavoritesRepository Favorites { get; }
         Task<int> Complete();
     }
 }

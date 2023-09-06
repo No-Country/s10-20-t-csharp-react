@@ -7,6 +7,7 @@ using s10.Back.Data;
 using s10.Back.Data.IRepositories;
 using s10.Back.Data.Repositories;
 using s10.Back.DTO;
+using s10.Back.Models;
 using System.Linq.Dynamic.Core;
 using System.Security.Claims;
 
@@ -20,15 +21,17 @@ public class QuejasController : ControllerBase
     private readonly RedCoContext _context;
     private readonly ICloudinaryService _cloudinaryService;
     private readonly GeometryFactory _geometryFactory;
+    private readonly IUnitOfWork _unitOfWork;
     //private List<Comment> _comments;
     //private List<Queja> _quejas;
     //private List<Category> _categories;
     //private List<AppUser> _users;
     //private List<District> _districts;
 
-    public QuejasController(ILogger<QuejasController> logger, RedCoContext context, 
+    public QuejasController(IUnitOfWork unitOfWork, ILogger<QuejasController> logger, RedCoContext context,
         ICloudinaryService cloudinaryService, GeometryFactory geometryFactory)
     {
+        _unitOfWork = unitOfWork;
         _logger = logger;
         _context = context;
         _cloudinaryService = cloudinaryService;
@@ -187,7 +190,7 @@ public class QuejasController : ControllerBase
         {
             return BadRequest();
         }
-        
+
     }
 
     [HttpGet]
@@ -235,10 +238,11 @@ public class QuejasController : ControllerBase
                 theQueja,
                 (HttpContext.GetEndpoint() as RouteEndpoint)!.RoutePattern.RawText!);
         }
-        else {
+        else
+        {
             return NotFound();
         }
-        
+
     }
 
 
@@ -420,5 +424,55 @@ public class QuejasController : ControllerBase
         {
             return BadRequest();
         }
+    }
+
+
+
+    /// <summary>
+    /// favorites a complaint, but if already favorited will change status to disabled
+    /// </summary>
+    /// <param name="id"></param>
+    
+    [HttpPut("{id}/MeGusta")]
+    //[Authorize]
+    public async Task<ActionResult<bool>> MeGusta(int id)
+    {
+        var userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
+
+        //for debug, delete
+        if( userEmail == null)
+        {
+            userEmail = "test@domain.com";
+        }
+
+        var complaint = _unitOfWork.Quejas.Get(id);
+        if(complaint == null)
+        {
+            return BadRequest();
+        }
+        //complaint.Favorites //navegation property missing
+
+        var alreadyFavorited = _unitOfWork
+            .Favorites.GetAll()
+            .FirstOrDefault(x => x.FavoritedBy == userEmail && x.Complaint_ID == id);
+
+        if(alreadyFavorited == null)
+        {
+            alreadyFavorited = new Favorite()
+            {
+                Complaint_ID = id,
+                Favorited = DateTime.UtcNow,
+                FavoritedBy = userEmail,
+                Enabled = true
+            };
+        }
+        else
+        {
+            alreadyFavorited.Enabled = !alreadyFavorited.Enabled;
+        }
+
+        _unitOfWork.Favorites.Update(alreadyFavorited);
+        var rows = await _unitOfWork.Complete();
+        return alreadyFavorited.Enabled;
     }
 }

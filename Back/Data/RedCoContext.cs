@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using quejapp.Models;
+using s10.Back.Models;
 
 namespace s10.Back.Data
 {
@@ -13,6 +14,8 @@ namespace s10.Back.Data
         public virtual DbSet<Locality> Locality { get; set; }
         public virtual DbSet<Queja> Queja { get; set; }
         public virtual DbSet<AppUser> AppUser { get; set; }
+        public virtual DbSet<Favorite> Favorites { get; set; }  
+        
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
