@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
-import Navbar from './Navbar'
 import { useEffect } from 'react'
 import axios from "axios"
 import MuroPublicationStructure from './MuroPublicationStructure'
 import FiltrosMuro from './FiltrosMuro'
+import Navbar from '../components/navbar'
 
 const Muro = () => {
 
@@ -23,7 +23,8 @@ const Muro = () => {
 
   return (
     <div> 
-        <Navbar/>
+      <Navbar/>
+        
         <div className='flex justify-center items-center mt-6 '>
              <div className='flex'>
 

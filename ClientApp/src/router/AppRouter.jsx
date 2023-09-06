@@ -10,6 +10,7 @@ import Register from "../pages/Register";
 import Report from "../pages/report";
 import MyReports from "../pages/MyReports";
 import NewReport from "../pages/NewReport";
+import Muro from "../pages/Muro";
 
 const router = createBrowserRouter([
   {
@@ -44,6 +45,11 @@ const router = createBrowserRouter([
     path: "/newreport",
     element: <NewReport/>,
   },
+  {
+    path: "/muro",
+    element: <Muro/>,
+  },
+  
 ]);
 
 export function AppRouter() {
