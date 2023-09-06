@@ -1,9 +1,32 @@
 import { useState } from "react";
 
 import { NewReport } from "../components/NewReport";
+import React from "react"
+import axios from "axios"
+import {useEffect} from "react"
 
 const Report = () => {
   const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => { 
+    axios.get("https://s10nc.somee.com/api/Auth/IsAuthenticated")
+        .then((res) => { 
+          console.log(res.data)
+        })
+        .catch((err) => { 
+          console.log(err)
+        })
+  }, [])
+
+  useEffect(() => { 
+    axios.get("https://s10nc.somee.com/api/Me")
+        .then((res) => { 
+          console.log(res.data)
+        })
+        .catch((err) => { 
+          console.log(err)
+        })
+  }, [])
 
   return (
     <>

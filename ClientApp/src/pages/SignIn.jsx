@@ -29,6 +29,11 @@ const SignIn = () => {
                 console.log(err)
             })
         }
+
+
+        useEffect(() => { 
+              console.log(userCtx.userId)
+        }, [userCtx.userId])
  
 
   return (
@@ -75,7 +80,7 @@ const SignIn = () => {
 
                                     <div className=' flex justify-center mt-4 font-bold'>
                                         <GoogleIcon className='mr-2'/>
-                                        <button className='border-none text-center text-sm bg-white- border rounded-xl'>Iniciar Sesion con Google</button>
+                                       <Link to={"https://s10nc.somee.com/auth2/login"}><button className='border-none text-center text-sm bg-white- border rounded-xl'>Iniciar Sesion con Google</button></Link> 
                                     </div>
                                 
                                     <div className='justify-center text-center font-bold'>

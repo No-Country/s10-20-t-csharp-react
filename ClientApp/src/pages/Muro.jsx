@@ -8,6 +8,7 @@ import Navbar from '../components/navbar'
 const Muro = () => {
 
   const [allPublications, setAllPublications] = useState([])
+  const [load, setLoad] = useState(true)
 
 
     useEffect(() => { 
@@ -15,6 +16,9 @@ const Muro = () => {
           .then((res) => { 
             console.log(res.data.data)
             setAllPublications(res.data.data)
+            setTimeout(() => { 
+             setLoad(false)
+            }, 1500)
           })
           .catch((err) => { 
             console.log(err)
@@ -25,6 +29,12 @@ const Muro = () => {
     <div> 
       <Navbar/>
         
+        { load ? 
+          <div className='flex flex-grow h-screen justify-center '>
+           
+             <span className="loading loading-spinner loading-lg"></span>
+          </div> 
+         :
         <div className='flex justify-center items-center mt-6 '>
              <div className='flex'>
 
@@ -53,7 +63,7 @@ const Muro = () => {
                     </div>                            
                  </div>
              </div>
-        </div>
+        </div>}
     </div>
   )
 }
