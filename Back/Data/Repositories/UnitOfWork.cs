@@ -12,11 +12,15 @@ namespace s10.Back.Data.Repositories
             AppUsers = new AppUserRespository(_context);
             Comments = new CommentRepository(_context);
             Quejas = new QuejaRepository(_context);
+            Favorites = new FavoritesRepository(_context);
+
         }
         public ICategoryRepository Categories { get; private set; }
         public IAppUserRepository AppUsers { get; private set; }
         public ICommentRepository Comments { get; private set; }
         public IQuejaRepository Quejas { get; private set; }
+
+        public IFavoritesRepository Favorites { get; private set; }
 
         public async Task<int> Complete()
         {

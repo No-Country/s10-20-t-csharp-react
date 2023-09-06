@@ -14,9 +14,6 @@ using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
-//builder.Services.AddDbContext<Context>(
-//   options => options.UseSqlServer(builder.Configuration.GetConnectionString("s10")));
 builder.Services.AddDbContext<RedCoContext>(
    options => 
        options.UseSqlServer(builder.Configuration.GetConnectionString("s10"),
@@ -56,12 +53,7 @@ builder.Services.AddAuthentication(options =>
 
 #endregion
 
-//builder.Services.AddControllers()
-    // .AddJsonOptions(options =>
-    //options.JsonSerializerOptions
-    //.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)
-    ;
-
+builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
 
 builder.Services.AddControllers(options => 
 {

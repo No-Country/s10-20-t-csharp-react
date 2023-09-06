@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using quejapp.Data;
+using s10.Back.Data;
 using s10.Back.DTO;
 using System.Security.Claims;
 
@@ -11,9 +11,9 @@ namespace s10.Back.Controllers
     [ApiController]
     public class MeController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly RedCoContext _context;
 
-        public MeController(ApplicationDbContext context)
+        public MeController(RedCoContext context)
         {
             _context = context;
         }
