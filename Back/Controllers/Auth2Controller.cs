@@ -23,7 +23,7 @@ namespace s10.Back.Controllers
 
         public ActionResult Home()
         {
-            return Ok("loggedOut");
+            return Ok( new { loggedOut = true });
         }
 
         /// <summary>
@@ -48,6 +48,8 @@ namespace s10.Back.Controllers
         // [Route("/signin-google")]
         public async Task<IActionResult> GoogleResponse()
         {
+            var urlBase = HttpContext.Request.QueryString;
+
             var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             var claims = result.Principal.Identities
                 .FirstOrDefault().Claims.Select(claim => new
@@ -68,13 +70,28 @@ namespace s10.Back.Controllers
                     {
                         Email = posibleUser.First().Value,
                         Name = claims.Where(c => c.Type == ClaimTypes.Name).First().Value,
+                        GivenName = (claims.FirstOrDefault( x => x.Type == ClaimTypes.GivenName)?.Value)??""
                     };
                     unitOfWork.AppUsers.Add(newUser);
                     changes = await unitOfWork.Complete();
                 }
-                return Json(claims);
             }
-            return Json(claims);
+
+
+            //redirect
+            var r = HttpContext.Request;
+            var url = r.Scheme +"://" + r.Host;
+#if DEBUG
+            //only webapi redirect to swagger
+            if(r.Host.Port.Equals(5001))
+            {
+                return Redirect($"{url}/swagger");
+            }
+            return Redirect($"{url}/");
+#else
+            //Relese with spa redirect to Wall?
+            return Redirect($"{url}/");
+#endif
         }
 
         [Authorize]
@@ -84,10 +101,12 @@ namespace s10.Back.Controllers
         }
 
         [Authorize]
+        [HttpPost]
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync();
-            return RedirectToAction(nameof(Home));
+            return Ok(new { loggedOut = true });
+            //return RedirectToAction(nameof(Home));
         }
     }
 }
