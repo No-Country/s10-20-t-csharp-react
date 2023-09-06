@@ -20,7 +20,7 @@ const SignIn = () => {
             email, 
             password
         })
-        axios.post("https://127.0.0.1:44461/auth2/login", userToLog)
+        axios.get("https://127.0.0.1:44461/auth2/login", userToLog)
             .then((res) => { 
                 console.log(res.data)
                 userCtx.updateUser(res.data.data.id)
@@ -62,7 +62,10 @@ const SignIn = () => {
                                             <input  id="Contraseña" name="Contraseña" placeholder="Contraseña" type="text" required className="input input-sm block w-full border border-black font-PoppinsRegular 
                                             ring-pallete-grey focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6"  onChange={(e) => setPassword(e.target.value)}
                                             />
-                                            <p className="mt-2 text-xs text-black underline ml-[250px] cursor-pointer">Olvide la contraseña</p>
+                                            <div className='flex flex-grow justify-end'>
+                                               <p className="mt-2 text-xs text-black underline ml-[250px] cursor-pointer">Olvide la contraseña</p>
+                                            </div>
+                                           
                                         </div>
                                     </div>
 
