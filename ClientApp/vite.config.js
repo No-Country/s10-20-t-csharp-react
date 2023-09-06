@@ -20,6 +20,11 @@ export default defineConfig({
                 target: "https://localhost:7125",
                 changeOrigin: true,
                 secure: false,
+            },
+            "/Auth2": {
+                target: "https://localhost:7125",
+                changeOrigin: true,
+                secure: false,
             }
         },
     },

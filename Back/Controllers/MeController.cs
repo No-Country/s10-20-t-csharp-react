@@ -38,8 +38,9 @@ namespace s10.Back.Controllers
         {
             var claims = User.Identities
                 .FirstOrDefault().Claims;
+            var userEmail = User.FindFirst(ClaimTypes.Email).Value;
+            var user = _unitOfWork.AppUsers.Find(x => x.Email == userEmail).FirstOrDefault();
 
-            var userEmail = claims.First(x => x.Type == ClaimTypes.Email).Value;
             //TODO Get the user from Db, if not try to create it and return a DTO
             //var user = _context.Usuarios.FirstOrDefault(x => x.Email.Equals(userEmail));
             //if(User == null )
@@ -50,11 +51,11 @@ namespace s10.Back.Controllers
             return new MeGetDto()
             {
                 Email = userEmail,
-                Name = claims.First(x => x.Type == ClaimTypes.Name).Value,
-                GivenName = claims.First(x => x.Type == ClaimTypes.GivenName).Value,
-                LastName = claims.First(x => x.Type == ClaimTypes.Name).Value,
-                Picture_Url = null,
-                Address = null
+                Name = (claims.FirstOrDefault(x => x.Type == ClaimTypes.Name)?.Value) ?? "",
+                GivenName = (claims.FirstOrDefault(x => x.Type == ClaimTypes.GivenName)?.Value) ?? "",
+                LastName = (claims.FirstOrDefault(x => x.Type == ClaimTypes.Surname)?.Value) ?? "",
+                Picture_Url = user == null ? null : user.ProfilePicAddress,
+                Address = user == null ? null : user.Address
             };
         }
 
