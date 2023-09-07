@@ -25,7 +25,7 @@ namespace s10.Back.Data.Repositories
             var user = new AppUserDTO()
             {
                 Email = email,
-                User_ID = u.User_ID,
+                User_ID = u.Id,
                 Name = u.Name
             };
             if (user is not null)
