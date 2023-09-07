@@ -43,7 +43,7 @@ const SignIn = () => {
                     </div>
 
                     <div className='justify-center mt-6 bg-white'>
-                        <button className=''>Iniciar Sesion con Google</button>
+                        <a href="https://s10nc.somee.com/auth2/login?mode=dev&redirect_to=report" className=''>Iniciar Sesion con Google</a>
                     </div>
                  
                     <div className='justify-center bg-white'>
