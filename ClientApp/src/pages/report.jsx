@@ -1,12 +1,15 @@
 import { useState } from "react";
-
 import { NewReport } from "../components/NewReport";
 import React from "react"
 import axios from "axios"
 import {useEffect} from "react"
+import { useContext } from 'react';
+import { UserContext } from '../store/userContext';
 
 const Report = () => {
+
   const [isOpen, setIsOpen] = useState(false);
+  const userCtx = useContext(UserContext)
 
   useEffect(() => { 
     axios.get("https://s10nc.somee.com/api/Auth/IsAuthenticated")
@@ -19,9 +22,12 @@ const Report = () => {
   }, [])
 
   useEffect(() => { 
-    axios.get("https://s10nc.somee.com/api/Me")
+    axios.get("https://s10nc.somee.com/api/me")
         .then((res) => { 
           console.log(res.data)
+          userCtx.updateUserName(res.data.name)
+          userCtx.updateUserEmail(res.data.email)
+          userCtx.updateUserProfileImage(res.data.picture_Url)
         })
         .catch((err) => { 
           console.log(err)
