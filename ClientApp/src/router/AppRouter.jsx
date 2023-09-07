@@ -10,6 +10,8 @@ import Register from "../pages/Register";
 import Report from "../pages/report";
 import MyReports from "../pages/MyReports";
 import NewReport from "../pages/NewReport";
+import { MyProfile } from "../pages/MyProfile";
+import { EditProfile } from "../pages/EditProfile";
 
 const router = createBrowserRouter([
   {
@@ -33,16 +35,24 @@ const router = createBrowserRouter([
     element: <Report />,
   },
   {
+    path: "/profile",
+    element: <MyProfile />,
+  },
+  {
+    path: "/editprofile",
+    element: <EditProfile />,
+  },
+  {
     path: "*",
     element: <NotFound />,
   },
   {
     path: "/myreports",
-    element: <MyReports/>,
+    element: <MyReports />,
   },
   {
     path: "/newreport",
-    element: <NewReport/>,
+    element: <NewReport />,
   },
 ]);
 
