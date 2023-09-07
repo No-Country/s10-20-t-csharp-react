@@ -41,7 +41,7 @@ export default function Navbar() {
         <h3 className="text-primary-100 text-2xl font-bold">Red Co.</h3>
       </Link>
       <ul className="flex gap-4">
-        <Link to="#">
+        <Link to="/muro">
           <li>Muro</li>
         </Link>
         <Link to="#">

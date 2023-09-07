@@ -12,6 +12,7 @@ import MyReports from "../pages/MyReports";
 import NewReport from "../pages/NewReport";
 import { MyProfile } from "../pages/MyProfile";
 import { EditProfile } from "../pages/EditProfile";
+import Muro from "../pages/Muro";
 
 const router = createBrowserRouter([
   {
@@ -53,6 +54,10 @@ const router = createBrowserRouter([
   {
     path: "/newreport",
     element: <NewReport />,
+  },
+  {
+    path: "/muro",
+    element: <Muro />,
   },
 ]);
 

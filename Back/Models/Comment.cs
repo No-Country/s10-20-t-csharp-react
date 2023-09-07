@@ -10,8 +10,9 @@ public class Comment
     public int Comment_ID { get; set; }
     public string Text { get; set; } = string.Empty;
     [ForeignKey(name: "User")]
-    public int? User_ID { get; set; }
-    public AppUser? User { get; set; } = null!;
+    public int User_ID { get; set; }
+    [ForeignKey(name: "User_ID")]
+    public AppUser User { get; set; } = null!;
     [ForeignKey(name: "Complaint")]
     public int Complaint_ID { get; set; }
     

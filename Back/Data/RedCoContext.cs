@@ -1,20 +1,21 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using quejapp.Models;
-using System.Reflection.Emit;
-using System.Reflection.Metadata;
-using System.Text.RegularExpressions;
+using s10.Back.Models;
 
-namespace quejapp.Data
+namespace s10.Back.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class RedCoContext : DbContext
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+        public RedCoContext(DbContextOptions<RedCoContext> options) : base(options)
         { }
         public virtual DbSet<Category> Category { get; set; }
         public virtual DbSet<Comment> Comment { get; set; }
         public virtual DbSet<District> District { get; set; }
         public virtual DbSet<Locality> Locality { get; set; }
         public virtual DbSet<Queja> Queja { get; set; }
+        public virtual DbSet<AppUser> AppUser { get; set; }
+        public virtual DbSet<Favorite> Favorites { get; set; }  
+        
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -30,12 +31,18 @@ namespace quejapp.Data
                 .WithOne(e => e.Locality)
                 .HasForeignKey(e => e.Locality_ID)
                 .IsRequired();
+            builder.Entity<AppUser>()
+               .HasMany(e => e.Comments)
+               .WithOne(e => e.User)
+               .HasForeignKey(e => e.User_ID)
+               .IsRequired();
 
             builder.Entity<Category>().Property(t => t.Category_ID).ValueGeneratedOnAdd();
             builder.Entity<Comment>().Property(p => p.Comment_ID).ValueGeneratedOnAdd();
             builder.Entity<District>().Property(p => p.District_ID).ValueGeneratedOnAdd();
             builder.Entity<Locality>().Property(m => m.Locality_ID).ValueGeneratedOnAdd();
             builder.Entity<Queja>().Property(m => m.Complaint_ID).ValueGeneratedOnAdd();
+            builder.Entity<AppUser>().Property(m => m.User_ID).ValueGeneratedOnAdd();
         }
     }
 

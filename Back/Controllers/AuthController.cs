@@ -1,9 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using s10.Back.Services.Auth.Models;
-using System.Security.Claims;
 
 namespace s10.Back.Controllers
 {
@@ -21,11 +18,18 @@ namespace s10.Back.Controllers
         {
         }
 
-        [HttpGet("Authenticated"),Authorize]
+        [HttpGet("IsAuthenticated")]
         public ActionResult Authenticated()
         {
-            return Ok(User.Identity.Name);
+            return Ok( new { IsAuthenticated = (User.Identity?.IsAuthenticated) ?? false });
         }
 
+        [Authorize]
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync();
+            return Ok(new { loggedOut = true });
+        }
     }
 }

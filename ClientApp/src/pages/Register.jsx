@@ -1,16 +1,50 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { MainLayout } from "../layout/MainLayout";
+import axios from "axios";
+import { useState, useEffect } from "react";
+import imageFon from "../images/imageFon.png";
+import imageFonTwo from "../images/img_myreports.png";
 
 const Register = () => {
+  const [name, setName] = useState("");
+  const [surname, setSurname] = useState("");
+  const [birthdatePlace, setBirthdatePlace] = useState("");
+  const [residence, setResidence] = useState("");
+  const [birthdate, setBirthdate] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  /*   const registerNewUser = () => { 
+        const newUserToBeRegistered = ( { 
+            name, 
+            surname,
+            birthdatePlace,
+            residence,
+            birthdate,
+            email,
+            password
+        })
+        axios.post("............", newUserToBeRegistered)
+             .then((res) => { 
+                console.log(res.data)
+             })
+             .catch((err) => { 
+                console.log(err)
+             })
+     }*/
+
   return (
     <MainLayout>
       <div>
         <>
-          <div className="flex mt-12 justify-center">
+          <div className="flex mt-12 gap-14 justify-center">
             <div className="text-center justify-center">
               <h1 className="font-bold text-xl">Bienvenidos a QuejLAP </h1>
-              <img src="https://img.freepik.com/vector-gratis/vector-degradado-logotipo-colorido-pajaro_343694-1365.jpg"></img>
+              <div>
+                <img src={imageFon} className="w-96"></img>
+                <img src={imageFonTwo} className="w-96"></img>
+              </div>
             </div>
             <main className="flex justify-end  items-center  gap-10 sm:gap-0 my-6 mx-2 sm:mx-5 md:mx-10">
               <div className="basis-1/2 w-[50vh] flex flex-1 flex-col sm:gap-0 justify-center p-6 py-8 sm:py-6 lg:px-8 rounded-lg bg-gray-200 bg-opacity-60 shadow-md">
@@ -30,6 +64,7 @@ const Register = () => {
                           required
                           className="input input-sm block w-full border border-black font-PoppinsRegular 
                                  focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6"
+                          onChange={e => setName(e.target.value)}
                         />
                       </div>
                     </div>
@@ -44,6 +79,7 @@ const Register = () => {
                           required
                           className="input input-sm block w-full border border-black font-PoppinsRegular 
                                 ring-pallete-grey focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6"
+                          onChange={e => setSurname(e.target.value)}
                         />
                       </div>
                     </div>
@@ -58,6 +94,7 @@ const Register = () => {
                           required
                           className="input input-sm block w-full border border-black font-PoppinsRegular 
                                 ring-pallete-grey focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6"
+                          onChange={e => setBirthdatePlace(e.target.value)}
                         />
                       </div>
                     </div>
@@ -73,6 +110,7 @@ const Register = () => {
                           required
                           className="input input-sm block w-full border border-black font-PoppinsRegular 
                                 ring-pallete-grey focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6"
+                          onChange={e => setResidence(e.target.value)}
                         />
                       </div>
                     </div>
@@ -87,6 +125,7 @@ const Register = () => {
                           required
                           className="input input-sm block w-full border border-black font-PoppinsRegular 
                                 ring-pallete-grey focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6"
+                          onChange={e => setBirthdate(e.target.value)}
                         />
                       </div>
                     </div>
@@ -101,6 +140,7 @@ const Register = () => {
                           required
                           className="input input-sm block w-full border border-black font-PoppinsRegular 
                                 ring-pallete-grey focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6"
+                          onChange={e => setEmail(e.target.value)}
                         />
                       </div>
                     </div>
@@ -115,6 +155,7 @@ const Register = () => {
                           required
                           className="input input-sm block w-full border border-black font-PoppinsRegular 
                                 ring-pallete-grey focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6"
+                          onChange={e => setPassword(e.target.value)}
                         />
                         <p className="mt-2 text-sm text-gray-500">
                           La contraseña debe contener al menos
@@ -129,22 +170,18 @@ const Register = () => {
 
                     <button
                       type="submit"
-                      className="btn btn-md px-10 mt-4 border border-black "
+                      className="btn btn-md bg-blue-950 text-white font-bold px-10 mt-4 border border-black "
                     >
-                      Registrarse
+                      Registrarme
                     </button>
 
-                    <div className="flex flex-col gap-3 mt-5 mx-auto items-center justify-center">
-                      <p className=" text-center text-xs sm:text-sm font-PoppinsSemibold text-pallete-grey">
-                        ¿Ya estás registrado?
-                        <Link
-                          Link
-                          to="/login"
-                          className="px-2 font-PoppinsSemibold leading-6 text-pallete-green"
-                        >
-                          Iniciar sesión
-                        </Link>
-                      </p>
+                    <div className="flex flex-col gap-3 mt-5 mx-auto r justify-end">
+                      <Link to={"/login"}>
+                        <p className=" text-center text-xs sm:text-sm font-PoppinsSemibold justify-end text-pallete-grey">
+                          {" "}
+                          Ya tengo cuenta{" "}
+                        </p>
+                      </Link>
                     </div>
                   </div>
                 </form>
