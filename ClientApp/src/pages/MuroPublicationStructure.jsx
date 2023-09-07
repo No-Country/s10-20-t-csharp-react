@@ -8,34 +8,44 @@ import axios from "axios"
 
 const MuroPublicationStructure = ({pub}) => {
 
-  const userCtx = useContext(UserContext)
-  const [commentText, setCommentText] = useState("")
+        const userCtx = useContext(UserContext)
+        const [commentText, setCommentText] = useState("")
 
+        function openModalThree() {
+          const modal = document.getElementById('my_modal_3');
+          modal.showModal();
+        }
 
-  function openModalThree() {
-    const modal = document.getElementById('my_modal_3');
-    modal.showModal();
-  }
+        function openModalFour() {
+          const modal = document.getElementById('my_modal_4');
+          modal.showModal();
+        }
+          
+        const sendNewComment = () => { 
+          const newComment = ({ 
+            text: commentText,
+            complaint_ID: pub.complaint_ID
+          })
+          axios.post("https://s10nc.somee.com/api/Comments", newComment)
+              .then((res) => { 
+                console.log(res.data)
+              })
+              .catch((err) => { 
+                console.log(err)
+              })
+        }
 
-  function openModalFour() {
-    const modal = document.getElementById('my_modal_4');
-    modal.showModal();
-  }
-     
-
-  const sendNewComment = () => { 
-    const newComment = ({ 
-      text: commentText,
-      complaint_ID: pub.complaint_ID
-    })
-    axios.post("api/Comments", newComment)
-         .then((res) => { 
-          console.log(res.data)
-         })
-         .catch((err) => { 
-          console.log(err)
-         })
-  }
+        const savePublicationInFavs = (pub) => { 
+          axios.put(`https://s10nc.somee.com/api/Quejas/${pub.complaint_ID}/MeGusta`)
+          
+               .then((res) => { 
+                console.log(res.data)
+                console.log("Enviando Favs")
+               })
+               .catch((err) => { 
+                console.log(err)
+               })
+        }
   
 
   return (
@@ -74,7 +84,7 @@ const MuroPublicationStructure = ({pub}) => {
                                     </div> 
                                     <div className='flex justify-between'>
 
-                                       <button className="btn"><FavoriteBorderIcon/></button>
+                                       <button className="btn" onClick={() => savePublicationInFavs(pub)}><FavoriteBorderIcon/></button>
                                         <button className="btn" onClick={() => openModalThree()}><MarkUnreadChatAltIcon/></button>
                                         <button className="btn" onClick={() => openModalFour()}><ShareIcon/></button>
                                            </div>
