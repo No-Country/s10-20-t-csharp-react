@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
 
-namespace quejapp.DTO
+namespace s10.Back.DTO
 {
     public class QuejaRequestDTO : RequestDTO<Queja>
     {        

@@ -1,6 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using s10.Back.DTO;
+using System.ComponentModel.DataAnnotations;
 
-namespace quejapp.Data;
+namespace s10.Back.Data;
 
 public class PagedList<T> : List<T>
 {
@@ -39,17 +40,18 @@ public static class PagedListExtensions
         pagedResponse.CurrentPage = data.CurrentPage;
         pagedResponse.PageSize = data.PageSize;
         pagedResponse.Next = data.HasNext ? $"{url}?" +
-        $"{nameof(PagedListResponseParams.PageNumber)}={data.CurrentPage + 1}" +
-               $"&{nameof(PagedListResponseParams.PageSize)}={data.PageSize}" : "";
+        $"{nameof(PagedListRequestParams.PageNumber)}={data.CurrentPage + 1}" +
+               $"&{nameof(PagedListRequestParams.PageSize)}={data.PageSize}" : "";
 
         pagedResponse.Prev = (data.Count > 0 && data.HasPrevious) ? $"{url}?" +
-        $"{nameof(PagedListResponseParams.PageNumber)}={data.CurrentPage - 1}" +
-            $"&{nameof(PagedListResponseParams.PageSize)}={data.PageSize}" : "";
+        $"{nameof(PagedListRequestParams.PageNumber)}={data.CurrentPage - 1}" +
+            $"&{nameof(PagedListRequestParams.PageSize)}={data.PageSize}" : "";
 
 
         pagedResponse.Data = mapper(data);
         return pagedResponse;
     }
+
 }
 public class PagedListResponse<T> where T : class
 {
@@ -76,18 +78,18 @@ public class PagedListResponse<T> where T : class
         Data = data;
 
         Next = data.HasNext ? $"{url}?" +
-               $"{nameof(PagedListResponseParams.PageNumber)}={CurrentPage + 1}" +
-               $"&{nameof(PagedListResponseParams.PageSize)}={PageSize}" : "";
+               $"{nameof(PagedListRequestParams.PageNumber)}={CurrentPage + 1}" +
+               $"&{nameof(PagedListRequestParams.PageSize)}={PageSize}" : "";
 
         Prev = (data.Count > 0 && data.HasPrevious) ? $"{url}?" +
-            $"{nameof(PagedListResponseParams.PageNumber)}={CurrentPage - 1}" +
-            $"&{nameof(PagedListResponseParams.PageSize)}={PageSize}" : "";
+            $"{nameof(PagedListRequestParams.PageNumber)}={CurrentPage - 1}" +
+            $"&{nameof(PagedListRequestParams.PageSize)}={PageSize}" : "";
     }
     public PagedListResponse() { }
 }
 
 
-public class PagedListResponseParams
+public class PagedListRequestParams
 {
     [Range(1, int.MaxValue)]
     public int PageNumber { get; set; } = 1;
