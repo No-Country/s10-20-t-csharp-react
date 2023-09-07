@@ -1,15 +1,30 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using quejapp.Data;
-
-
+using NetTopologySuite;
+using NetTopologySuite.Geometries;
+using s10.Back.Data;
+using s10.Back.Data.IRepositories;
+using s10.Back.Data.Repositories;
+using s10.Back.Handler;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddDbContext<RedCoContext>(
+   options => 
+       options.UseSqlServer(builder.Configuration.GetConnectionString("s10"),
+    sqlServerOptions => sqlServerOptions.UseNetTopologySuite()    
+   ));
 
+builder.Services.AddScoped<ICloudinaryService, CloudinaryHelper>();
+
+//var automapper = new MapperConfiguration(item => item.AddProfile(new AutoMapperHandler()));
+//IMapper mapper = automapper.CreateMapper();
+//builder.Services.AddSingleton(mapper);
 
 #region Auth
 
@@ -38,12 +53,7 @@ builder.Services.AddAuthentication(options =>
 
 #endregion
 
-//builder.Services.AddControllers()
-    // .AddJsonOptions(options =>
-    //options.JsonSerializerOptions
-    //.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)
-    ;
-
+builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
 
 builder.Services.AddControllers(options => 
 {
@@ -84,10 +94,11 @@ builder.Services.AddSwaggerGen(option =>
     });
 });
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    //options.UseSqlServer(builder.Configuration["SqlServer:ConnectionString"]
-    options.UseSqlServer(builder.Configuration["ConnectionStrings:S10"]
-    ));
+//builder.Services.AddAutoMapper(typeof(Program).Assembly);
+builder.Services.AddSingleton<GeometryFactory>(
+    NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326));
+
+builder.Services.AddAuthorization();
 
 
 builder.Services.AddAuthorization();
