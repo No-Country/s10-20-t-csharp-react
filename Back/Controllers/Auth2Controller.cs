@@ -52,6 +52,8 @@ namespace s10.Back.Controllers
         // [Route("/signin-google")]
         public async Task<IActionResult> GoogleResponse(string mode, string? Redirect_Uri = null)
         {
+            var urlBase = HttpContext.Request.QueryString;
+
             var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             var claims = result.Principal.Identities
                 .FirstOrDefault().Claims.Select(claim => new
