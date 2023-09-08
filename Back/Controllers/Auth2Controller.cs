@@ -9,7 +9,6 @@ using quejapp.Models;
 using s10.Back.Data;
 using Microsoft.AspNetCore.Http.Extensions;
 using CloudinaryDotNet;
-using s10.Migrations;
 
 namespace s10.Back.Controllers
 {

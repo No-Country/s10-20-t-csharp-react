@@ -4,10 +4,14 @@ import axios from "axios"
 import MuroPublicationStructure from './MuroPublicationStructure'
 import FiltrosMuro from './FiltrosMuro'
 import Navbar from '../components/navbar'
+import { useContext } from 'react';
+import { UserContext } from '../store/userContext';
 
 const Muro = () => {
 
   const [allPublications, setAllPublications] = useState([])
+  const [load, setLoad] = useState(true)
+  const userCtx = useContext(UserContext)
 
 
     useEffect(() => { 
@@ -15,16 +19,32 @@ const Muro = () => {
           .then((res) => { 
             console.log(res.data.data)
             setAllPublications(res.data.data)
+            setTimeout(() => { 
+             setLoad(false)
+            }, 1500)
           })
           .catch((err) => { 
             console.log(err)
           })
+    }, []) 
+
+    useEffect(() => { 
+      console.log(userCtx.userName)
+      console.log(userCtx.userEmail)
+      console.log(userCtx.userProfileImage)
     }, [])
+    
 
   return (
     <div> 
       <Navbar/>
         
+        { load ? 
+          <div className='flex flex-grow h-screen justify-center '>
+           
+             <span className="loading loading-spinner loading-lg"></span>
+          </div> 
+         :
         <div className='flex justify-center items-center mt-6 '>
              <div className='flex'>
 
@@ -53,7 +73,7 @@ const Muro = () => {
                     </div>                            
                  </div>
              </div>
-        </div>
+        </div>}
     </div>
   )
 }

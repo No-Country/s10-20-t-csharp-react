@@ -118,6 +118,7 @@ public class QuejasController : ControllerBase
                 AddedAt = DateTime.UtcNow,
                 Complaint_ID = id,
                 Text = model.Text,
+                Id = "",
                 User_ID = unitOfWork
                     .AppUsers
                     .GetByEmail(User.FindFirstValue(ClaimTypes.Email))

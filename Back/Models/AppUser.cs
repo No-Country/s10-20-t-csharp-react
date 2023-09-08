@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
@@ -6,12 +7,12 @@ using System.Text.Json.Serialization;
 namespace quejapp.Models;
 
 [Index("Email", IsUnique = true)]
-public class AppUser
+public class AppUser :IdentityUser
 {
-    [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    //[Key]
+    //[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int User_ID { get; set; }
-    public string Email { get; set; } = string.Empty;
+    // public string Email { get; set; } = string.Empty;
     public string Address { get; set; } = string.Empty;
     public string ProfilePicAddress { get; set; } = string.Empty;
     [JsonIgnore]
