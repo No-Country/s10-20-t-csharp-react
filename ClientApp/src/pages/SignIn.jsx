@@ -8,22 +8,34 @@ import { useContext } from 'react';
 import { UserContext } from '../store/userContext';
 import imageFon from "../images/imageFon.png"
 import imageFonTwo from "../images/img_myreports.png"
+import { useNavigate } from 'react-router-dom';
 
 const SignIn = () => {
 
-     const userCtx = useContext(UserContext)
-        const [email, setEmail] = useState("")
+        const userCtx = useContext(UserContext)
+        const navigate = useNavigate()
+        const [user, setUser] = useState("")
         const [password, setPassword] = useState("")
+        const [redirect_to, setRedirect_to] = useState("hola")
 
        const loginAccount = () => { 
         const userToLog = ({ 
-            email, 
-            password
+            user: user,
+            password: password,
+            redirect_to: redirect_to
         })
-        axios.get("https://127.0.0.1:44461/auth2/login", userToLog)
+        axios.post("https://s10nc.somee.com/api/Auth/login", userToLog)
             .then((res) => { 
                 console.log(res.data)
-                userCtx.updateUser(res.data.data.id)
+                setTimeout(() => { 
+                    userCtx.updateUserName(res.data.name)
+                    userCtx.updateUserEmail(res.data.email)
+                    userCtx.updateUserProfileImage(res.data.picture_Url)
+                }, 400)
+               
+                setTimeout(() => { 
+                    navigate("/muro")
+                })
             })
             .catch((err) => { 
                 console.log(err)
@@ -31,10 +43,9 @@ const SignIn = () => {
         }
 
 
-        useEffect(() => { 
-              console.log(userCtx.userId)
-        }, [userCtx.userId])
- 
+
+
+    
 
   return (
       <div>
@@ -58,7 +69,7 @@ const SignIn = () => {
                                     <div>
                                         <div className="mt-2">
                                             <input  id="Email" name="user" placeholder="Email" type="text" required className="input input-sm block w-full border border-black font-PoppinsRegular 
-                                            ring-pallete-grey focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6" onChange={(e) => setEmail(e.target.value)}/>
+                                            ring-pallete-grey focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6" onChange={(e) => setUser(e.target.value)}/>
                                         </div>
                                     </div>
 
@@ -80,7 +91,8 @@ const SignIn = () => {
 
                                     <div className=' flex justify-center mt-4 font-bold'>
                                         <GoogleIcon className='mr-2'/>
-                                       <Link to={"/report"}><button className='border-none text-center text-sm bg-white- border rounded-xl'>Iniciar Sesion con Google</button></Link> 
+                                        <a href="https://s10nc.somee.com/auth2/login?mode=dev&redirect_to=report"> <button className='border-none text-center text-sm bg-white- border rounded-xl' >Iniciar Sesion con Google</button> </a>
+                                      
                                     </div>
                                 
                                     <div className='justify-center text-center font-bold'>

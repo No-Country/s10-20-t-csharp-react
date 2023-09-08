@@ -8,31 +8,31 @@ import { UserContext } from '../store/userContext';
 
 const Report = () => {
 
-  const [isOpen, setIsOpen] = useState(false);
-  const userCtx = useContext(UserContext)
+    const [isOpen, setIsOpen] = useState(false);
+    const userCtx = useContext(UserContext)
 
-  useEffect(() => { 
-    axios.get("https://s10nc.somee.com/api/Auth/IsAuthenticated")
-        .then((res) => { 
-          console.log(res.data)
-        })
-        .catch((err) => { 
-          console.log(err)
-        })
-  }, [])
+    useEffect(() => { 
+      axios.get("https://s10nc.somee.com/api/Auth/IsAuthenticated")
+          .then((res) => { 
+            console.log(res.data)
+          })
+          .catch((err) => { 
+            console.log(err)
+          })
+    }, [])
 
-  useEffect(() => { 
-    axios.get("https://s10nc.somee.com/api/me")
-        .then((res) => { 
-          console.log(res.data)
-          userCtx.updateUserName(res.data.name)
-          userCtx.updateUserEmail(res.data.email)
-          userCtx.updateUserProfileImage(res.data.picture_Url)
-        })
-        .catch((err) => { 
-          console.log(err)
-        })
-  }, [])
+    useEffect(() => { 
+      axios.get("https://s10nc.somee.com/api/Me") 
+          .then((res) => { 
+            console.log(res.data)
+            userCtx.updateUserName(res.data.name)
+            userCtx.updateUserEmail(res.data.email)
+            userCtx.updateUserProfileImage(res.data.picture_Url)
+          })
+          .catch((err) => { 
+            console.log(err)
+          })
+    }, [])
 
   return (
     <>
