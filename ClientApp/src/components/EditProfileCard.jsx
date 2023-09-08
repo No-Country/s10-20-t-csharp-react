@@ -37,46 +37,49 @@ export function EditProfileCard() {
       <div className=" border-slate-400 p-4 flex flex-col gap-10 w-full">
         <div className="flex flex-col gap-8" method="POST">
           <label className="flex flex-col gap-2" htmlFor="name">
-            <h3>Nombre Completo</h3>
-            <input
-              className="p-2 border border-slate-400 rounded-md"
-              name="name"
-              type="text"
-            />
+            <h3>Nombre(s)</h3>
           </label>
+          <input
+            className="p-2 border border-slate-400 rounded-md"
+            name="name"
+            type="text"
+          />
+
+          <label className="flex flex-col gap-2" htmlFor="name">
+            <h3>Apellido(s)</h3>
+          </label>
+          <input
+            className="p-2 border border-slate-400 rounded-md"
+            name="name"
+            type="text"
+          />
+
           <label className="flex flex-col gap-2" htmlFor="desc">
             <h3>Descripción</h3>
-            <input
-              className="p-2 border border-slate-400 rounded-md"
-              name="desc"
-              type="text"
-            />
           </label>
+          <input
+            className="p-2 border border-slate-400 rounded-md"
+            name="desc"
+            type="text"
+          />
           <label className="flex flex-col gap-2" htmlFor="location">
             <h3>Ubicación</h3>
-            <input
-              className="p-2 border border-slate-400 rounded-md"
-              name="location"
-              type="text"
-            />
           </label>
-          <label className="flex flex-col gap-2" htmlFor="email">
-            <h3>Email</h3>
-            <input
-              className="p-2 border border-slate-400 rounded-md"
-              name="email"
-              type="email"
-            />
-          </label>
+          <input
+            className="p-2 border border-slate-400 rounded-md"
+            name="location"
+            type="text"
+          />
+
           <label className="flex flex-col gap-2">
             <h3>Contraseña</h3>
-            <input
-              className="p-2 border border-slate-400 rounded-md"
-              type="password"
-              minLength={5}
-              maxLength={15}
-            />
           </label>
+          <input
+            className="p-2 border border-slate-400 rounded-md"
+            type="password"
+            minLength={5}
+            maxLength={15}
+          />
           <button
             className="font-bold p-2 border text-terciary-100 border-terciary-100 rounded-2xl w-[10em] m-auto hover:bg-cyan-100 transition-colors"
             type="submit"
