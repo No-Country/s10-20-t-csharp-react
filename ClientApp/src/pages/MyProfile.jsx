@@ -1,16 +1,19 @@
-import { useReducer, useState } from "react";
+import { useContext, useEffect, useReducer, useState } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 import { MainLayout } from "../layout/MainLayout";
 import { LikeIcon } from "../components/atoms/corazon";
+import { CommentCard } from "../components/CommentCard";
 
+import { UserContext } from "../store/userContext";
 import FotoCalle from "../assets/subir.png";
 import ConfigIcon from "../assets/icons/configuracion.svg";
 import ProfileImg from "../assets/icons/profile_img.png";
 import LocationIcon from "../assets/icons/ubicacion2.svg";
 import ComentarioIcon from "../assets/icons/comentario.svg";
 import CompartirIcon from "../assets/icons/compartir.svg";
-import { CommentCard } from "../components/CommentCard";
+import { ComplainsContext } from "../store/complainsContext";
 
 const ReportCard = () => {
   const [like, setLike] = useState(false);
@@ -88,7 +91,9 @@ const ReportCard = () => {
         </div>
         <div className="flex flex-col gap-2">
           <Link>Ir a mis reportes</Link>
-          <p className="p-2 border text-primary-100 text-center">Acera</p>
+          <p className="p-2 border text-primary-100 text-center rounded-md">
+            Acera
+          </p>
         </div>
       </div>
     </div>
@@ -96,6 +101,9 @@ const ReportCard = () => {
 };
 
 export function MyProfile() {
+  const userContext = useContext(UserContext);
+  const complainsContext = useContext(ComplainsContext);
+
   const [elems, dispatch] = useReducer(
     (state, action) => {
       switch (action.type) {
@@ -121,8 +129,8 @@ export function MyProfile() {
   return (
     <div>
       <MainLayout>
-        <section className="py-12">
-          <div className="w-[40em] mx-auto border border-slate-400 shadow-sm p-4 flex flex-col gap-8 font-normal rounded-2xl">
+        <section className="pt-16 pb-20">
+          <div className="w-[45em] mx-auto border border-slate-400 shadow-sm p-4 flex flex-col gap-8 font-normal rounded-2xl">
             <div className="flex gap-8 items-center ">
               <div className="relative flex justify-center items-center">
                 <img
@@ -136,7 +144,7 @@ export function MyProfile() {
               <div className="flex flex-col gap-4">
                 <header>
                   <h3>
-                    <strong>Nombre</strong>
+                    <strong>{userContext.userName ?? "Nombre"}</strong>
                   </h3>
                   <p className="font-light">Descripción personal</p>
                 </header>
@@ -158,7 +166,7 @@ export function MyProfile() {
                       })
                     }
                   >
-                    Reportes
+                    Mis publicaciones
                   </button>
                 </li>
                 <li>
