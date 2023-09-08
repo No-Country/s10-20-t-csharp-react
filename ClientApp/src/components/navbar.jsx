@@ -7,8 +7,9 @@ import PerfilImg from "../assets/icons/perfil.png";
 
 const ProfileModal = () => {
   return (
-    <div className="bg-white p-4 shadow-md absolute top-20 right-0">
+    <div className="bg-white p-4 shadow-md absolute top-20 right-0 flex flex-col gap-2">
       <Link to="/profile">Mi Perfil</Link>
+      <button to="/logout">Cerrar Sesión</button>
     </div>
   );
 };
@@ -44,7 +45,7 @@ export default function Navbar() {
         <Link to="/muro">
           <li>Muro</li>
         </Link>
-        <Link to="#">
+        <Link to="/muro">
           <li>Nuevo Reporte</li>
         </Link>
         <div className="flex gap-4">
