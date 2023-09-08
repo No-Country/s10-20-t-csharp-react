@@ -42,13 +42,21 @@ namespace s10.Back.Controllers
             return Ok(new { loggedOut = true });
         }
 
-        [HttpPost("login")]
-        public async Task<IActionResult> Login([EmailAddress] string User, string Password, string redirect_to = "report")
+        public class LoginModel
         {
-            var user = _unitOfWork.AppUsers.Find(x => x.Email == User).FirstOrDefault();
+            [EmailAddress]
+            public string? User { get; set; }
+            public string? Password { get; set; }
+        }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginModel loginModel)
+        {
+            var user = _unitOfWork.AppUsers.Find(x => x.Email == loginModel.User).FirstOrDefault();
             if (user == null)
             {
                 //bad credentials
+                return Unauthorized();
             }
             var claims = new List<Claim>() { new Claim(ClaimTypes.Email, user.Email) };
             //await _signInManager.SignInAsync(user , isPersistent:true);
@@ -84,7 +92,7 @@ namespace s10.Back.Controllers
                 Name = email,
             };
 
-            var result = await _userManager.CreateAsync(newUser,"S10nc123!");
+            var result = await _userManager.CreateAsync(newUser, "S10nc123!");
 
             return Ok(new MeGetDto()
             {

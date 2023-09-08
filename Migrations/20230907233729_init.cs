@@ -6,7 +6,7 @@ using NetTopologySuite.Geometries;
 
 namespace s10.Migrations
 {
-    public partial class identuttyd : Migration
+    public partial class init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

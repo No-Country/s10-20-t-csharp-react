@@ -13,8 +13,8 @@ using s10.Back.Data;
 namespace s10.Migrations
 {
     [DbContext(typeof(RedCoContext))]
-    [Migration("20230907220235_identuttyd ")]
-    partial class identuttyd
+    [Migration("20230907233729_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
