@@ -30,26 +30,17 @@ const router = createBrowserRouter([
     element: <Register />,
   },
   {
-    path: "/report",
-    element: <Report />,
-  },
-  {
     path: "*",
     element: <NotFound />,
   },
   {
-    path: "/myreports",
-    element: <MyReports/>,
-  },
-  {
-    path: "/newreport",
-    element: <NewReport/>,
+    path: "/report",
+    element: <MyReports />,
   },
   {
     path: "/muro",
     element: <Muro/>,
   },
-  
 ]);
 
 export function AppRouter() {
