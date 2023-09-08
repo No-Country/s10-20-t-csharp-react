@@ -16,24 +16,18 @@ const Register = () => {
      const [email, setEmail] = useState("")
      const [password, setPassword] = useState("")
 
-  /*   const registerNewUser = () => { 
-        const newUserToBeRegistered = ( { 
-            name, 
-            surname,
-            birthdatePlace,
-            residence,
-            birthdate,
-            email,
-            password
+    const registerNewUser = () => { 
+        const newUserToBeRegistered = ({ 
+            email
         })
-        axios.post("............", newUserToBeRegistered)
+        axios.post("https://s10nc.somee.com/api/register", newUserToBeRegistered)
              .then((res) => { 
                 console.log(res.data)
              })
              .catch((err) => { 
                 console.log(err)
              })
-     }*/
+     }
      
 
 
@@ -119,7 +113,7 @@ const Register = () => {
                     </div>
 
 
-                    <button  type="submit" className="btn btn-md bg-blue-950 text-white font-bold px-10 mt-4 border border-black ">
+                    <button  type="submit" className="btn btn-md bg-blue-950 text-white font-bold px-10 mt-4 border border-black " onClick={() => registerNewUser()}>
                         Registrarme
                     </button>
 
