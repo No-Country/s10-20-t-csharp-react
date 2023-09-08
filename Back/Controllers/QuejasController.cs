@@ -108,7 +108,7 @@ public class QuejasController : ControllerBase
     [Authorize]
     [Route("{id}/comments")]
     [ResponseCache(CacheProfileName = "NoCache")]
-    public async Task<ActionResult<CommentResponseDTO>> CreateComment([FromQuery] CommentRequestDTO model, int id)
+    public async Task<ActionResult<CommentResponseDTO>> CreateComment( CommentRequestDTO model, int id)
     {
         if (ModelState.IsValid)
         {
