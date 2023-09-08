@@ -5,9 +5,10 @@ on:
     branches: [ "main" ]
 
 env:
-  PACKAGE_PATH: /home/runner/work/s10-20-t-csharp-react/s10-20-t-csharp-react/bin/Release/net6.0/publish
+  PACKAGE_PATH: /home/runner/work/s10-20-t-csharp-react-clone/s10-20-t-csharp-react-clone/bin/Release/net6.0/publish
+  WWWROOT: /home/runner/work/s10-20-t-csharp-react-clone/s10-20-t-csharp-react-clone/bin/Release/net6.0/publish/wwwroot
   CONFIGURATION: Release
-  WORKING_DIRECTORY: .
+  WORKING_DIRECTORY: /github/workspace/bin/Release/net6.0/publish/wwwroot
   
 jobs:
   build-deploy:
@@ -19,12 +20,9 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 6.0.x
-    - name: Restore dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --no-restore
+   
     - name: Publish
-      run: dotnet publish  --configuration ${{ env.CONFIGURATION }} --no-build
+      run: dotnet publish  --configuration ${{ env.CONFIGURATION }} 
       
     - name: Upload Artifacts
       uses: actions/upload-artifact@v3
@@ -38,10 +36,9 @@ jobs:
          server: ${{ secrets.FTP_SERVER }}
          user: ${{ secrets.FTP_SERVER_USER }}
          password: ${{ secrets.FTP_SERVER_PASSWORD }}
-         local_dir: ${{ env.WORKING_DIRECTORY }}
-         remote_dir: ${{ secrets.FTP_SERVER_REMOTE_DIR }}        
+         local_dir: ${{ env.WWWROOT }}
+         remote_dir: /www.s10nc.somee.com/wwwroot/
          delete: "true"
 
  
     
-
