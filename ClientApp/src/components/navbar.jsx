@@ -1,9 +1,14 @@
 import { Link } from "react-router-dom";
+import { useState } from "react";
 
 import NotificationIcon from "../assets/icons/notificaciones.svg";
 import PerfilIcon from "../assets/icons/perfil.svg";
 
+import Notifications from "./Notifications";
+
 export default function Navbar() {
+  const [isOpen, setIsOpen] = useState(false)
+
   return (
     <nav className="flex justify-between items-center w-full p-8">
       <Link to="/">
@@ -17,7 +22,7 @@ export default function Navbar() {
           <li>Nuevo Reporte</li>
         </Link>
         <div className="flex gap-4">
-          <Link>
+          <Link onClick={() => setIsOpen(!isOpen)}>
             <img
               width="30"
               height="30"
@@ -25,6 +30,9 @@ export default function Navbar() {
               alt="icono de las notififaciones"
             />
           </Link>
+          <div className={`${isOpen ? 'hidden' : 'flex'} absolute top-0`}>
+            <Notifications />
+          </div>
           <Link>
             <img
               width="30"
