@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
@@ -151,7 +152,9 @@ namespace s10.Back.Controllers
             //for debug, will choose first user with id 1 if not logged 
             var email = User.FindFirst(ClaimTypes.Email)?.Value ?? _unitOfWork.AppUsers.Get(1).Email;
             var user = (await _unitOfWork.AppUsers.GetByEmail(email)).First();
-            var myComments = _unitOfWork.Comments.GetAll().Where(x => x.User_ID == user.User_ID);
+
+            //TODO cambiar a ID
+            var myComments = _unitOfWork.Comments.GetAll().Where(x => x.Id == user.User_ID);
 
             var pagedList = PagedList<Comment>.Create(myComments, pagedQuery.PageIndex, pagedQuery.PageSize);
 
@@ -188,15 +191,18 @@ namespace s10.Back.Controllers
             var user = (await _unitOfWork.AppUsers.GetByEmail(email)).First();
 
             var favorites = _unitOfWork.Favorites.GetAll()
-                .Where(x => x.FavoritedBy == email)
+                .Where(x => x.FavoritedBy == email && x.Enabled)
                 .Select(x => x.Complaint_ID);
 
-            var myFavoriteComplaints = _unitOfWork.Quejas.GetAll().Where(x => favorites.Contains(x.Complaint_ID));
+            var myFavoriteComplaints = _unitOfWork.Quejas
+                .GetAll()
+                .Where(x => favorites.Contains(x.Complaint_ID));
 
             var pagedList = PagedList<Queja>.Create(myFavoriteComplaints);
             var url = HttpContext.Request.Path;
             var pagedResponse = new PagedListResponse<Queja>(pagedList, url);
 
+            pagedResponse.Data.ToList().ForEach(x => x.User = null);
             //TODO PagedResponse with DTO
             // var pagedResponse = pagedList.ToPagedListResponse("", url);
             //   PagedList<Favorite>.Create(myFavoriteComplaints);
@@ -214,7 +220,7 @@ namespace s10.Back.Controllers
                 .Where(x => x.User_ID == user.User_ID)
                 ;
 
-            if (!ids.Any(x => x.Complaint_ID == Complaint_Id))
+            if (!ids.Any(x => x.Complaint_ID == Complaint_Id) && Complaint_Id != null)
             {
                 return new PagedListResponse<CommentResponseDTO>();
             }
@@ -262,6 +268,8 @@ namespace s10.Back.Controllers
         [NonAction]
         public List<QuejaResponseDTO> QuejasToDto(List<Queja> quejas)
         {
+
+           
             var quejasDTO = quejas.Select(x =>
                new QuejaResponseDTO
                {
@@ -274,11 +282,14 @@ namespace s10.Back.Controllers
                    Category_Name = x.Category.Name,
                    Category_ID = x.Category.Category_ID,
                    // District_ID = x.District_ID,
-                   //Latitude = x.Location.X??0.0,
-                   //Longitude = x.Location.Y??0.0,
+                   Latitude = (x.Location?.Y)??0.0,
+                   Longitude = (x.Location?.X)??0.0,
                    LikesCount = x.Favorites_Count
                }
            );
+            //var geometryFactory = new GeometryFactory();
+            //geometryFactory.
+
             return quejasDTO.ToList();
         }
     }

@@ -9,9 +9,12 @@ public class Comment
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Comment_ID { get; set; }
     public string Text { get; set; } = string.Empty;
+    
+    public string User_ID { get; set; }
     [ForeignKey(name: "User")]
-    public int User_ID { get; set; }
-    [ForeignKey(name: "User_ID")]
+    public string Id { get; set; }
+
+    [ForeignKey(name: "Id")]
     public AppUser User { get; set; } = null!;
     [ForeignKey(name: "Complaint")]
     public int Complaint_ID { get; set; }

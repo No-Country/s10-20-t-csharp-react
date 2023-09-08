@@ -14,22 +14,29 @@ const SignIn = () => {
   const userCtx = useContext(UserContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+     const userCtx = useContext(UserContext)
+        const [email, setEmail] = useState("")
+        const [password, setPassword] = useState("")
 
-  const loginAccount = () => {
-    const userToLog = {
-      email,
-      password,
-    };
-    axios
-      .get("https://127.0.0.1:44461/auth2/login", userToLog)
-      .then(res => {
-        console.log(res.data);
-        userCtx.updateUser(res.data.data.id);
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  };
+       const loginAccount = () => { 
+        const userToLog = ({ 
+            email, 
+            password
+        })
+        axios.get("https://127.0.0.1:44461/auth2/login", userToLog)
+            .then((res) => { 
+                console.log(res.data)
+                userCtx.updateUser(res.data.data.id)
+            })
+            .catch((err) => { 
+                console.log(err)
+            })
+        }
+
+
+        useEffect(() => { 
+              console.log(userCtx.userId)
+        }, [userCtx.userId])
 
   return (
     <MainLayout>
@@ -125,4 +132,31 @@ const SignIn = () => {
   );
 };
 
+<<<<<<< HEAD
 export default SignIn;
+=======
+                                    <div className=' flex justify-center mt-4 font-bold'>
+                                        <GoogleIcon className='mr-2'/>
+                                       <Link to={"/report"}><button className='border-none text-center text-sm bg-white- border rounded-xl'>Iniciar Sesion con Google</button></Link> 
+                                    </div>
+                                
+                                    <div className='justify-center text-center font-bold'>
+                                            <FacebookIcon className='mr-2 '/>
+                                            <button className='border-none  bg-white border text-sm rounded-xl'>Iniciar Sesion con Meta</button>
+                                    </div>
+
+                                    <div className='flex flex-col gap-3 mt-5 mx-auto items-center justify-center'>              
+                                    <Link to={"/register"}><p className=" text-center underline text-xs sm:text-sm font-PoppinsSemibold text-pallete-grey">Registrarse con Email</p></Link> 
+                                    </div>
+                                </div>
+                           
+                    </div>
+                </main>
+           </div>
+       </>
+    </div>
+  )
+}
+
+export default SignIn
+>>>>>>> 793488aabeaf7d9f11b8e6b7173d0bb4d19318de

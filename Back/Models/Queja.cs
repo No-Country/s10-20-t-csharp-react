@@ -20,7 +20,7 @@ public class Queja
     [ForeignKey(name: "Category")]
     public int Category_ID { get; set; }
     [ForeignKey(name: "User")]
-    public int? User_ID { get; set; }
+    public string User_ID { get; set; }
     public Point? Location { get; set; } = null!;
     public bool? IsAnonymous { get; set; }
     public DateTime CreatedAt { get; set; }
