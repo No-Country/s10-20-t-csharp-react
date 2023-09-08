@@ -7,9 +7,10 @@ on:
 env:
   PACKAGE_PATH: /home/runner/work/s10-20-t-csharp-react/s10-20-t-csharp-react/bin/Release/net6.0/publish
   CONFIGURATION: Release
+  WORKING_DIRECTORY: .
   
 jobs:
-  build:
+  build-deploy:
     runs-on: ubuntu-latest
     
     steps:
@@ -30,3 +31,17 @@ jobs:
       with:
         name: webapp
         path: "${{ env.PACKAGE_PATH }}"
+        
+    - name: DEPLOY Upload from /publish via FTP
+      uses: airvzxf/ftp-deployment-action@latest
+      with:
+         server: ${{ secrets.FTP_SERVER }}
+         user: ${{ secrets.FTP_SERVER_USER }}
+         password: ${{ secrets.FTP_SERVER_PASSWORD }}
+         local_dir: ${{ env.WORKING_DIRECTORY }}
+         remote_dir: ${{ secrets.FTP_SERVER_REMOTE_DIR }}        
+         delete: "true"
+
+ 
+    
+

@@ -8,34 +8,54 @@ import axios from "axios"
 
 const MuroPublicationStructure = ({pub}) => {
 
-  const userCtx = useContext(UserContext)
-  const [commentText, setCommentText] = useState("")
+        const userCtx = useContext(UserContext)
+        const [commentText, setCommentText] = useState("")
+        const [changeColor, setChangeColor] = useState(true)
+        const [message, setMessage] = useState("")
+        const [showMessage, setShowMessage] = useState(false)
 
+        function openModalThree() {
+          const modal = document.getElementById('my_modal_3');
+          modal.showModal();
+        }
 
-  function openModalThree() {
-    const modal = document.getElementById('my_modal_3');
-    modal.showModal();
-  }
-
-  function openModalFour() {
-    const modal = document.getElementById('my_modal_4');
-    modal.showModal();
-  }
+        function openModalFour() {
+          const modal = document.getElementById('my_modal_4');
+          modal.showModal();
+        }
+          
+        const sendNewComment = (pub) => { 
+          const newComment = ({ 
+            text: commentText
+          })
+          axios.post(`https://s10nc.somee.com/api/Quejas/${pub.complaint_ID}/comments`, newComment)
      
+              .then((res) => { 
+                console.log(res.data)
+              })
+              .catch((err) => { 
+                console.log(err)
+              })
+        }
 
-  const sendNewComment = () => { 
-    const newComment = ({ 
-      text: commentText,
-      complaint_ID: pub.complaint_ID
-    })
-    axios.post("api/Comments", newComment)
-         .then((res) => { 
-          console.log(res.data)
-         })
-         .catch((err) => { 
-          console.log(err)
-         })
-  }
+        const savePublicationInFavs = (pub) => { 
+          axios.put(`https://s10nc.somee.com/api/Quejas/${pub.complaint_ID}/MeGusta`)
+               .then((res) => { 
+                console.log(res.data)
+                console.log("Enviando Favs")
+                setChangeColor(false)
+                setMessage("Almacenado en favoritos")
+                setTimeout(() => {
+                    setShowMessage(true)
+                }, 500);
+                setTimeout(() => { 
+                   setShowMessage(false)
+                }, 2500)
+               })
+               .catch((err) => { 
+                console.log(err)
+               })
+        }
   
 
   return (
@@ -74,10 +94,13 @@ const MuroPublicationStructure = ({pub}) => {
                                     </div> 
                                     <div className='flex justify-between'>
 
-                                       <button className="btn"><FavoriteBorderIcon/></button>
+                                      {changeColor ? <button className="btn" onClick={() => savePublicationInFavs(pub)}><FavoriteBorderIcon/></button> : <button className="btn" ><FavoriteBorderIcon style={{color: "white", background: "red"}}/></button>}
                                         <button className="btn" onClick={() => openModalThree()}><MarkUnreadChatAltIcon/></button>
-                                        <button className="btn" onClick={() => openModalFour()}><ShareIcon/></button>
-                                           </div>
+                                        <button className="btn" onClick={() => openModalFour()}><ShareIcon/></button> 
+                                         </div>
+                                         <div className='text-center mt-2 justify-center'>
+                                           {showMessage ? <span className='text-sm font-bold'>{message}</span> : null}
+                                        </div>
 
                                               <dialog id="my_modal_3" className="modal">
                                                   <form method="dialog" className="modal-box">
@@ -85,7 +108,7 @@ const MuroPublicationStructure = ({pub}) => {
                                                     <div className='flex items-center space-x-2'>
                                                         <div className="avatar">                                                     
                                                           <div className="w-8 rounded-full">
-                                                              <img src={userCtx.profileImage}/>                                               
+                                                              <img src={userCtx.userProfileImage}/>                                               
                                                           </div>
                                                           <p className='ml-2 text-gray-500 text-sm'>{userCtx.userName}</p>
                                                         </div>
