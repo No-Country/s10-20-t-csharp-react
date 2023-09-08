@@ -4,11 +4,14 @@ import axios from "axios"
 import MuroPublicationStructure from './MuroPublicationStructure'
 import FiltrosMuro from './FiltrosMuro'
 import Navbar from '../components/navbar'
+import { useContext } from 'react';
+import { UserContext } from '../store/userContext';
 
 const Muro = () => {
 
   const [allPublications, setAllPublications] = useState([])
   const [load, setLoad] = useState(true)
+  const userCtx = useContext(UserContext)
 
 
     useEffect(() => { 
@@ -25,6 +28,11 @@ const Muro = () => {
           })
     }, []) 
 
+    useEffect(() => { 
+      console.log(userCtx.userName)
+      console.log(userCtx.userEmail)
+      console.log(userCtx.userProfileImage)
+    }, [])
     
 
   return (

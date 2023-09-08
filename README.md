@@ -24,7 +24,7 @@ En la misma se puede:
 - **Sofia Allegreti**: Diseñadora UI/UX
 - **Elias Pereyra Gómez**: Desarrollador Front-end
 - **Octavio Salas**: Desarrollador Front-end
-- **Ana Suarez**: Desarrolladora Front-end
+- **Ana Juárez**: Desarrolladora Front-end
 - **David Echeverri**: Desarrollador Front-end
 - **Esteban Nuñez**: Desarrollador Back-end
 - **Daniel Torres**: Desarrollador Back-end
