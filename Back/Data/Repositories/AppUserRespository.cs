@@ -26,7 +26,8 @@ namespace s10.Back.Data.Repositories
             {
                 Email = email,
                 User_ID = u.Id,
-                Name = u.Name
+                Name = u.Name,
+                Picture = u.ProfilePicAddress
             };
             if (user is not null)
             {
@@ -36,6 +37,11 @@ namespace s10.Back.Data.Repositories
             {
                 return null;
             }
+        }
+
+        public void Update(AppUser user)
+        {
+            RedCoContext!.Update(user);
         }
     }
 }

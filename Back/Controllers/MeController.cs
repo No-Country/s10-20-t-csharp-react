@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using CloudinaryDotNet.Actions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
@@ -26,11 +27,13 @@ namespace s10.Back.Controllers
     {
         private readonly RedCoContext _context;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ICloudinaryService _cloudinaryService;
 
-        public MeController(RedCoContext context, IUnitOfWork unitOfWork)
+        public MeController(RedCoContext context, IUnitOfWork unitOfWork, ICloudinaryService cloudinaryService)
         {
             _unitOfWork = unitOfWork;
             _context = context;
+            _cloudinaryService = cloudinaryService;
         }
 
         [Authorize]
@@ -88,24 +91,63 @@ namespace s10.Back.Controllers
             };
         }
 
+
+        public class UpdatePictureResult
+        {
+            public bool IsSuccess { get; set; }
+            public string? PictureUrl { get; set; }
+            public string? Message { get; set; }
+            public string? Error { get; set; }
+        }
+
         [Authorize]
         [HttpPatch("picture")]
-        public ActionResult<MeGetDto> MePicture(IFormFile picture)
+        public async Task<ActionResult<UpdatePictureResult>> MePicture(IFormFile picture)
         {
-            var claims = User.Identities
-                .FirstOrDefault().Claims;
+            //TODO UserService
 
-            var userEmail = claims.First(x => x.Type == ClaimTypes.Email).Value;
-            //TODO Get the user from Db, if not try to create it and return a DTO
-            //var user = _context.Usuarios.FirstOrDefault(x => x.Email.Equals(userEmail));
-            //upload image to ImageHostingService
-            //update user
-            //save user
-            //from user, create DTO
-            return new MeGetDto
+            var userEmail = User.FindFirstValue(ClaimTypes.Email);
+            var user = await _unitOfWork.AppUsers
+                .GetAll()
+                .Where(x => x.Email == userEmail).FirstOrDefaultAsync();
+
+            if (user == null) throw new Exception("Session error");
+
+            try
             {
-                Picture_Url = "Not yet implemented but you will receive an url to " + picture.FileName,
-            };
+                var uploadResult = await _cloudinaryService.AddPhotoAsync(picture);
+                if (uploadResult.Error is not null)
+                {
+                    return new UpdatePictureResult
+                    {
+                        IsSuccess = false,
+                        Error = uploadResult.Error.Message,
+                    };
+                }
+
+                var PhotoAdress = "https://res.cloudinary.com" + uploadResult.SecureUrl.AbsolutePath;
+                user.ProfilePicAddress = PhotoAdress;
+                _unitOfWork.AppUsers.Update(user);
+                await _unitOfWork.Complete();
+
+                return new UpdatePictureResult
+                {
+                    IsSuccess = true,
+                    PictureUrl = user.ProfilePicAddress,
+                    Message = "Success"
+                };
+
+            }
+            catch (Exception e)
+            {
+                return new UpdatePictureResult
+                {
+                    IsSuccess = false,
+                    Error = e.Message
+                };
+            }
+
+
         }
 
 
@@ -269,7 +311,7 @@ namespace s10.Back.Controllers
         public List<QuejaResponseDTO> QuejasToDto(List<Queja> quejas)
         {
 
-           
+
             var quejasDTO = quejas.Select(x =>
                new QuejaResponseDTO
                {
@@ -282,8 +324,8 @@ namespace s10.Back.Controllers
                    Category_Name = x.Category.Name,
                    Category_ID = x.Category.Category_ID,
                    // District_ID = x.District_ID,
-                   Latitude = (x.Location?.Y)??0.0,
-                   Longitude = (x.Location?.X)??0.0,
+                   Latitude = (x.Location?.Y) ?? 0.0,
+                   Longitude = (x.Location?.X) ?? 0.0,
                    LikesCount = x.Favorites_Count
                }
            );

@@ -1,4 +1,3 @@
-using AutoMapper;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
@@ -12,8 +11,6 @@ using s10.Back.Data;
 using s10.Back.Data.IRepositories;
 using s10.Back.Data.Repositories;
 using s10.Back.Handler;
-using s10.Back.Services.Auth.Models;
-using System.Security.Claims;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,15 +23,8 @@ builder.Services.AddDbContext<RedCoContext>(
 
 builder.Services.AddScoped<ICloudinaryService, CloudinaryHelper>();
 
-//var automapper = new MapperConfiguration(item => item.AddProfile(new AutoMapperHandler()));
-//IMapper mapper = automapper.CreateMapper();
-//builder.Services.AddSingleton(mapper);
-//builder.Services.AddScoped<SignInManager<AppUser>>();
 
 #region Auth
-
-//builder.Services.AddIdentityCore<AppUser>(options => options.SignIn.RequireConfirmedAccount = true)
-//    .AddEntityFrameworkStores<RedCoContext>();
 
 builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
 {
@@ -130,24 +120,18 @@ builder.Services.AddCors(o =>
 
 var app = builder.Build();
 
-app.UseCors();
 
 app.UseSwagger();
 app.UseSwaggerUI();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller}/{action=Index}/{id?}");
-//app.UseMvc(routes =>
-//{
-//    routes.MapRoute(
-//        name: "default",
-//        template: "{controller=Auth2}/{action=login}");
-//});
 
 app.MapFallbackToFile("index.html");
 

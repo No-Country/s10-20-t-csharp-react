@@ -59,7 +59,13 @@ namespace s10.Back.Controllers
                 return Unauthorized();
             }
             var claims = new List<Claim>() { new Claim(ClaimTypes.Email, user.Email) };
-            //await _signInManager.SignInAsync(user , isPersistent:true);
+
+            //migrate user to identity
+            if (String.IsNullOrEmpty(user.SecurityStamp))
+            {
+                await _userManager.UpdateSecurityStampAsync(user);
+            }
+            
             await _signInManager.SignInWithClaimsAsync(user, isPersistent: true, claims);
 
             return Ok(new MeGetDto()
@@ -82,17 +88,31 @@ namespace s10.Back.Controllers
             return _unitOfWork.AppUsers.GetAll().Select(x => x.Email).ToList();
         }
 
-        [HttpGet("Register")]
-        public async Task<ActionResult<MeGetDto>> Register(string email)
+        [HttpPost("Register")]
+        public async Task<ActionResult<MeGetDto>> Register(RegisterModel model)
         {
             var newUser = new AppUser()
             {
-                Email = email,
-                UserName = email,
-                Name = email,
+                Email = model.Email,
+                UserName = model.Email,
+                Name = model.GivenName + " " + model.SurName,
+                GivenName= model.GivenName??null,
+                LastName = model.SurName??null,
             };
+            try
+            {
 
-            var result = await _userManager.CreateAsync(newUser, "S10nc123!");
+                var result = await _userManager.CreateAsync(newUser, "S10nc123!");
+
+                if(!result.Succeeded) {
+                    return BadRequest(result.Errors.Select(x => x));
+                }
+            }
+            catch (Exception e)
+            {
+                //log
+                throw;
+            }
 
             return Ok(new MeGetDto()
             {
@@ -100,11 +120,21 @@ namespace s10.Back.Controllers
                 Name = newUser.Name,
                 GivenName = newUser.GivenName,
                 LastName = newUser.LastName,
-                Picture_Url = newUser.ProfilePicAddress,
                 Address = newUser.Address
+
             });
+        }
 
-
+        public class RegisterModel
+        {
+            public string? GivenName { get; set; }
+            public string? SurName { get; set; }
+            public string? ResidenceLocation { get; set; }
+            public DateTime? Birthday { get; set; }
+            [EmailAddress]
+            [Required]
+            public string Email { get; set; }
+            public string? Password { get; set; }
         }
     }
 }
