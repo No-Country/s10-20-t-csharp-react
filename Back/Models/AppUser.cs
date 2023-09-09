@@ -9,10 +9,7 @@ namespace quejapp.Models;
 [Index("Email", IsUnique = true)]
 public class AppUser :IdentityUser
 {
-    //[Key]
-    //[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int User_ID { get; set; }
-    // public string Email { get; set; } = string.Empty;
+    
     public string Address { get; set; } = string.Empty;
     public string ProfilePicAddress { get; set; } = string.Empty;
     [JsonIgnore]
