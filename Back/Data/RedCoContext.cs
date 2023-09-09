@@ -46,7 +46,7 @@ namespace s10.Back.Data
             builder.Entity<District>().Property(p => p.District_ID).ValueGeneratedOnAdd();
             builder.Entity<Locality>().Property(m => m.Locality_ID).ValueGeneratedOnAdd();
             builder.Entity<Queja>().Property(m => m.Complaint_ID).ValueGeneratedOnAdd();
-             builder.Entity<AppUser>().Property(m => m.User_ID).ValueGeneratedOnAdd();
+           
         }
     }
 
