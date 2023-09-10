@@ -24,7 +24,6 @@ namespace s10.Back.DTO
         public string? Address {get;set;}
         public int? LikesCount { get; set; }
 
+        public List<CommentResponseDTO> Comments { get; set; } = new();
     }
-
-
 }

@@ -10,12 +10,13 @@ using s10.Back.Services;
 using System.Security.Cryptography;
 using s10.Back.Handler;
 using s10.Back.DTO;
+using System.Linq;
 
 namespace s10.Back.Data.Repositories;
 
 public class QuejaRepository : GenericRepository<Queja>, IQuejaRepository
 {
-    public QuejaRepository(RedCoContext context )//NO hacer injección POr constructor acá
+    public QuejaRepository(RedCoContext context)//NO hacer injección POr constructor acá
         : base(context)
     { }
 
@@ -39,6 +40,12 @@ public class QuejaRepository : GenericRepository<Queja>, IQuejaRepository
             .Include(q => q.Category)
             .Include(q => q.District)
             .Include(q => q.User)
+            .Include(q => q.Comments)
+            .ThenInclude( x => x.User)
+
+           // .ToList()
+           // ;
+//            viewFeed
             .Select(q => new QuejaResponseDTO
             {
                 Complaint_ID = q.Complaint_ID,
@@ -52,12 +59,16 @@ public class QuejaRepository : GenericRepository<Queja>, IQuejaRepository
                 UserPhoto = q.User.ProfilePicAddress,
                 CreatedAt = q.CreatedAt,
                 Longitude = q.Location != null ? q.Location.X : 0,
-                Latitude = q.Location != null ? q.Location.Y : 0
+                Latitude = q.Location != null ? q.Location.Y : 0,
+                Comments =  CommentResponseDTO.ToCommentResponseDTO(q.Comments.Take(5))
 
-            }).OrderBy($"{model.SortColumn} {model.SortOrder}");
+            })
+             .OrderBy($"{model.SortColumn} {model.SortOrder}");
+        //TODO Esteban cuando haces esto el paginado sucede en el total de la consulta y no en el repo, por lo tanto si hay 1 millon trae 1 millo y
+        //luego pagina desde ahi, recuerda que la libreria de paginado te permite enviar un mapper para convertir en DTOs los resultados ya paginados
 
         return PagedList<QuejaResponseDTO>.Create(viewFeed, model.PageIndex, model.PageSize);
-            
+
     }
     public PagedList<QuejaResponseDTO>? GetPaged(int id)
     {
@@ -96,7 +107,7 @@ public class QuejaRepository : GenericRepository<Queja>, IQuejaRepository
         var laQueja = Get(qId);
         if (laQueja is not null)
         {
-          
+
             var _geometryFactory = new GeometryFactory();
             var _cloudinaryService = new CloudinaryHelper();
             IFormFile? file = model.media;
@@ -108,9 +119,9 @@ public class QuejaRepository : GenericRepository<Queja>, IQuejaRepository
                     ? await _cloudinaryService.DeletePhotoAsync(laQueja.PhotoAdress)
                     : null;
                 // y se agrega otra foto y se la dirección de esta en al bd
-                uploadResult = await _cloudinaryService.AddPhotoAsync(file!);     
+                uploadResult = await _cloudinaryService.AddPhotoAsync(file!);
             }
-                    
+
             laQueja.PhotoAdress = uploadResult.SecureUrl is not null
                 ? "https://res.cloudinary.com" + uploadResult.SecureUrl.AbsolutePath
                 : laQueja.PhotoAdress;
