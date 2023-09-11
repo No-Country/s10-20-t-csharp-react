@@ -18,7 +18,7 @@ export default function Navbar() {
         <Link to="/muro">
           <li>Muro</li>
         </Link>
-        <Link to="#">
+        <Link to="/report">
           <li>Nuevo Reporte</li>
         </Link>
         <div className="flex gap-4">
@@ -29,10 +29,10 @@ export default function Navbar() {
               src={NotificationIcon}
               alt="icono de las notififaciones"
             />
+            <div className={`${isOpen ? 'flex' : 'hidden'} -mt-10`}>
+              <Notifications />
+            </div>
           </Link>
-          <div className={`${isOpen ? 'hidden' : 'flex'} absolute top-0`}>
-            <Notifications />
-          </div>
           <Link>
             <img
               width="30"
