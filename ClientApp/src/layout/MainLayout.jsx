@@ -3,7 +3,7 @@ import Navbar from "../components/navbar";
 
 export function MainLayout({ children }) {
   return (
-    <div className="p2">
+    <div>
       <Navbar />
       {children}
       <Footer />
