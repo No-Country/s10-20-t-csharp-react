@@ -1,16 +1,19 @@
-import { useState } from "react";
+import { useContext, useEffect, useReducer, useState } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 import { MainLayout } from "../layout/MainLayout";
 import { LikeIcon } from "../components/atoms/corazon";
-import { EditProfile } from "../components/EditProfile";
+import { CommentCard } from "../components/CommentCard";
 
+import { UserContext } from "../store/userContext";
 import FotoCalle from "../assets/subir.png";
 import ConfigIcon from "../assets/icons/configuracion.svg";
 import ProfileImg from "../assets/icons/profile_img.png";
 import LocationIcon from "../assets/icons/ubicacion2.svg";
 import ComentarioIcon from "../assets/icons/comentario.svg";
 import CompartirIcon from "../assets/icons/compartir.svg";
+import { ComplainsContext } from "../store/complainsContext";
 
 const ReportCard = () => {
   const [like, setLike] = useState(false);
@@ -34,7 +37,7 @@ const ReportCard = () => {
               <h3>
                 <strong>Titulo del reporte</strong>
               </h3>
-              <p className="font-light">Descripción del repoorte</p>
+              <p className="font-light">Descripción del reporte</p>
             </header>
             <div className="flex flex-col gap-4">
               <div className="flex gap-2 items-center">
@@ -88,7 +91,9 @@ const ReportCard = () => {
         </div>
         <div className="flex flex-col gap-2">
           <Link>Ir a mis reportes</Link>
-          <p className="p-2 border text-primary-100 text-center">Acera</p>
+          <p className="p-2 border text-primary-100 text-center rounded-md">
+            Acera
+          </p>
         </div>
       </div>
     </div>
@@ -96,15 +101,36 @@ const ReportCard = () => {
 };
 
 export function MyProfile() {
-  const [profileConfigModal, setProfileConfigModal] = useState(false);
+  const userContext = useContext(UserContext);
+  const complainsContext = useContext(ComplainsContext);
+
+  const [elems, dispatch] = useReducer(
+    (state, action) => {
+      switch (action.type) {
+        case "setReports":
+          return { ...state, elems: action.payload };
+        case "setComments":
+          return { ...state, elems: action.payload };
+        case "setFavorites":
+          return { ...state, elems: action.payload };
+        case "setReceivedComments":
+          return { ...state, elems: action.payload };
+        default:
+          return <ReportCard />;
+      }
+    },
+    {
+      elems: [<ReportCard />],
+    }
+  );
 
   const handleClick = e => {};
 
   return (
     <div>
       <MainLayout>
-        <section className="py-12">
-          <div className="w-[40em] mx-auto border border-slate-400 shadow-sm p-4 flex flex-col gap-8 font-normal rounded-2xl">
+        <section className="pt-16 pb-20">
+          <div className="w-[45em] mx-auto border border-slate-400 shadow-sm p-4 flex flex-col gap-8 font-normal rounded-2xl">
             <div className="flex gap-8 items-center ">
               <div className="relative flex justify-center items-center">
                 <img
@@ -118,42 +144,79 @@ export function MyProfile() {
               <div className="flex flex-col gap-4">
                 <header>
                   <h3>
-                    <strong>Nombre</strong>
+                    <strong>{userContext.userName ?? "Nombre"}</strong>
                   </h3>
                   <p className="font-light">Descripción personal</p>
                 </header>
               </div>
-              <button
-                onClick={() => setProfileConfigModal(!profileConfigModal)}
-              >
-                {profileConfigModal ? <EditProfile /> : null}
+              <Link to="/editprofile">
                 <img src={ConfigIcon} alt="Icono de un engranaje para editar" />
-              </button>
+              </Link>
             </div>
             <nav>
               <ul className="flex gap-4 justify-between font-light">
                 <li className="">
-                  <button aria-selected="true" className="p-2 border-t-2">
-                    Reportes
+                  <button
+                    aria-selected="true"
+                    className="p-2 border-t-2"
+                    onClick={e =>
+                      dispatch({
+                        type: "setReports",
+                        payload: [<ReportCard />, <ReportCard />],
+                      })
+                    }
+                  >
+                    Mis publicaciones
                   </button>
                 </li>
                 <li>
-                  <button className="p-2">Comentarios</button>
+                  <button
+                    className="p-2"
+                    onClick={() =>
+                      dispatch({
+                        type: "setComments",
+                        payload: [<CommentCard />, <CommentCard />],
+                      })
+                    }
+                  >
+                    Comentarios
+                  </button>
                 </li>
                 <li>
-                  <button className="p-2">Favoritos</button>
+                  <button
+                    className="p-2"
+                    onClick={() =>
+                      dispatch({
+                        type: "setFavorites",
+                        payload: [],
+                      })
+                    }
+                  >
+                    Favoritos
+                  </button>
                 </li>
                 <li>
-                  <button className="p-2">Comentarios Recibidos</button>
+                  <button
+                    className="p-2"
+                    onClick={() =>
+                      dispatch({
+                        type: "setReceivedComments",
+                        payload: [],
+                      })
+                    }
+                  >
+                    Comentarios Recibidos
+                  </button>
                 </li>
               </ul>
             </nav>
-            <section className="flex flex-col gap-10">
-              <ReportCard />
-              <ReportCard />
-              <ReportCard />
-              <ReportCard />
-            </section>
+            <ul className="flex flex-col gap-10">
+              {elems.elems.length > 0 ? (
+                elems.elems.map((elem, i) => <li key={i}>{elem}</li>)
+              ) : (
+                <p className="text-slate-700">No hay elementos</p>
+              )}
+            </ul>
           </div>
         </section>
       </MainLayout>
