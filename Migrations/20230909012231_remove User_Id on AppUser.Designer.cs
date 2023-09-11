@@ -13,8 +13,8 @@ using s10.Back.Data;
 namespace s10.Migrations
 {
     [DbContext(typeof(RedCoContext))]
-    [Migration("20230907220235_identuttyd ")]
-    partial class identuttyd
+    [Migration("20230909012231_remove User_Id on AppUser")]
+    partial class removeUser_IdonAppUser
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -229,12 +229,6 @@ namespace s10.Migrations
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
-
-                    b.Property<int>("User_ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("User_ID"), 1L, 1);
 
                     b.HasKey("Id");
 

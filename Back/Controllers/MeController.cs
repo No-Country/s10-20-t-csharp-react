@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using CloudinaryDotNet.Actions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Validations;
@@ -26,11 +28,15 @@ namespace s10.Back.Controllers
     {
         private readonly RedCoContext _context;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ICloudinaryService _cloudinaryService;
+        private readonly UserManager<AppUser> _userManager;
 
-        public MeController(RedCoContext context, IUnitOfWork unitOfWork)
+        public MeController(RedCoContext context, IUnitOfWork unitOfWork, ICloudinaryService cloudinaryService, UserManager<AppUser> userManager)
         {
             _unitOfWork = unitOfWork;
             _context = context;
+            _cloudinaryService = cloudinaryService;
+            _userManager = userManager;
         }
 
         [Authorize]
@@ -62,50 +68,99 @@ namespace s10.Back.Controllers
 
         [Authorize]
         [HttpPatch]
-        public ActionResult<MeGetDto> MePatch(MePatchDto me)
+        public async Task<ActionResult<MeGetDto>> MePatch(MePatchDto me)
         {
-            var claims = User.Identities
-                .FirstOrDefault().Claims;
+            var userEmail = User.FindFirst(ClaimTypes.Email)!.Value;
+            //  var _me = _unitOfWork.AppUsers.GetAll().Where(x => x.Email == userEmail).First();
+            var _me = await _userManager.FindByEmailAsync(userEmail);
 
-            var userEmail = claims.First(x => x.Type == ClaimTypes.Email).Value;
-            //TODO Get the user from Db, if not try to create it and return a DTO
-            //var user = _context.Usuarios.FirstOrDefault(x => x.Email.Equals(userEmail));
-            //if(User == null )
-            //{
-            //    //create User
-            //}
-            //update user
-            //save user
-            //from user, create DTO
-            return new MeGetDto()
+            _me.GivenName = me.GivenName ?? _me.GivenName;
+            _me.LastName = me.LastName ?? _me.LastName;
+            _me.Address = me.Address ?? _me.Address;
+            _me.Name = _me.GivenName +' '+ _me.LastName; //identity shpould calculate this
+
+            try
             {
-                Email = userEmail,
-                Name = me.Name,
-                GivenName = me.GivenName,
-                LastName = me.LastName,
-                Picture_Url = "Not yet implemented but you will receive an url ",
-                Address = me.Address
-            };
+                //the user needs to be updated using userManager for name update? no because is from model
+
+                var updateResult = await _userManager.UpdateAsync(_me);
+                //_unitOfWork.AppUsers.Update(_me);
+                //await _unitOfWork.Complete();
+
+                return new MeGetDto()
+                {
+                    Email = userEmail,
+                    Name = _me.Name,
+                    GivenName = _me.GivenName,
+                    LastName = _me.LastName,
+                    Picture_Url = _me.ProfilePicAddress,
+                    Address = me.Address
+                };
+            }
+            catch (Exception e)
+            {
+                //log(e)
+                throw;
+            }
+        }
+
+
+        public class UpdatePictureResult
+        {
+            public bool IsSuccess { get; set; }
+            public string? PictureUrl { get; set; }
+            public string? Message { get; set; }
+            public string? Error { get; set; }
         }
 
         [Authorize]
         [HttpPatch("picture")]
-        public ActionResult<MeGetDto> MePicture(IFormFile picture)
+        public async Task<ActionResult<UpdatePictureResult>> MePicture(IFormFile picture)
         {
-            var claims = User.Identities
-                .FirstOrDefault().Claims;
+            //TODO UserService
 
-            var userEmail = claims.First(x => x.Type == ClaimTypes.Email).Value;
-            //TODO Get the user from Db, if not try to create it and return a DTO
-            //var user = _context.Usuarios.FirstOrDefault(x => x.Email.Equals(userEmail));
-            //upload image to ImageHostingService
-            //update user
-            //save user
-            //from user, create DTO
-            return new MeGetDto
+            var userEmail = User.FindFirstValue(ClaimTypes.Email);
+            var user = await _unitOfWork.AppUsers
+                .GetAll()
+                .Where(x => x.Email == userEmail).FirstOrDefaultAsync();
+
+            if (user == null) throw new Exception("Session error");
+
+            try
             {
-                Picture_Url = "Not yet implemented but you will receive an url to " + picture.FileName,
-            };
+                var uploadResult = await _cloudinaryService.AddPhotoAsync(picture);
+                if (uploadResult.Error is not null)
+                {
+                    return new UpdatePictureResult
+                    {
+                        IsSuccess = false,
+                        Error = uploadResult.Error.Message,
+                    };
+                }
+
+                var PhotoAdress = "https://res.cloudinary.com" + uploadResult.SecureUrl.AbsolutePath;
+                user.ProfilePicAddress = PhotoAdress;
+                _unitOfWork.AppUsers.Update(user);
+                await _unitOfWork.Complete();
+
+                return new UpdatePictureResult
+                {
+                    IsSuccess = true,
+                    PictureUrl = user.ProfilePicAddress,
+                    Message = "Success"
+                };
+
+            }
+            catch (Exception e)
+            {
+                return new UpdatePictureResult
+                {
+                    IsSuccess = false,
+                    Error = e.Message
+                };
+            }
+
+
         }
 
 
@@ -125,7 +180,8 @@ namespace s10.Back.Controllers
                 ).ToList();
 
             //email for debug
-            var email = User.FindFirst(ClaimTypes.Email)?.Value ?? _unitOfWork.AppUsers.Get(1).Email;
+            var email = User.FindFirst(ClaimTypes.Email)?.Value;
+            if (String.IsNullOrEmpty(email)) return Unauthorized();
 
             var misQuejas = _unitOfWork.Quejas.GetAll()
                 .Include(x => x.Category)
@@ -173,19 +229,19 @@ namespace s10.Back.Controllers
             return await CommentsService_GetCommentsReceived(email);
         }
 
-        //[Authorize]
+        [Authorize]
         [HttpGet()]
         [Route("Comments/Received/{Complaint_Id?}")]
         public async Task<ActionResult<PagedListResponse<CommentResponseDTO>>> GetCommentsReceived([FromQuery] RequestDTO<object> pagedQuery, int Complaint_Id)
         {
-            var email = User.FindFirst(ClaimTypes.Email)?.Value ?? _unitOfWork.AppUsers.Get(1).Email;
-            return await CommentsService_GetCommentsReceived(email, Complaint_Id);
+            var email = User.FindFirst(ClaimTypes.Email)!.Value;
+            return await CommentsService_GetCommentsReceived(email!, Complaint_Id);
         }
 
 
         [HttpGet()]
         [Route("Favorites")]
-        public async Task<ActionResult<PagedListResponse<Queja>>> GetMyFavorites([FromQuery] RequestDTO<object> pagedQuery)
+        public async Task<ActionResult<PagedListResponse<QuejaResponseDTO>>> GetMyFavorites([FromQuery] RequestDTO<object> pagedQuery)
         {
             var email = User.FindFirst(ClaimTypes.Email)?.Value ?? _unitOfWork.AppUsers.Get(1).Email;
             var user = (await _unitOfWork.AppUsers.GetByEmail(email)).First();
@@ -196,18 +252,14 @@ namespace s10.Back.Controllers
 
             var myFavoriteComplaints = _unitOfWork.Quejas
                 .GetAll()
+                .Include(x => x.Category)
                 .Where(x => favorites.Contains(x.Complaint_ID));
 
             var pagedList = PagedList<Queja>.Create(myFavoriteComplaints);
             var url = HttpContext.Request.Path;
-            var pagedResponse = new PagedListResponse<Queja>(pagedList, url);
+            var response = pagedList.ToPagedListResponse(QuejasToDto, url);
 
-            pagedResponse.Data.ToList().ForEach(x => x.User = null);
-            //TODO PagedResponse with DTO
-            // var pagedResponse = pagedList.ToPagedListResponse("", url);
-            //   PagedList<Favorite>.Create(myFavoriteComplaints);
-
-            return pagedResponse;
+            return response;
         }
 
 
@@ -216,12 +268,14 @@ namespace s10.Back.Controllers
         private async Task<PagedListResponse<CommentResponseDTO>> CommentsService_GetCommentsReceived(string userEmail, int? Complaint_Id = null)
         {
             var user = (await _unitOfWork.AppUsers.GetByEmail(userEmail)).First();
-            var ids = _unitOfWork.Quejas.GetAll()
+            var ids = _unitOfWork.Quejas
+                .GetAll()
                 .Where(x => x.User_ID == user.User_ID)
                 ;
 
             if (!ids.Any(x => x.Complaint_ID == Complaint_Id) && Complaint_Id != null)
             {
+                //throw since clamplaint doesnt belong to user? or a bussi nens rule from caller
                 return new PagedListResponse<CommentResponseDTO>();
             }
 
@@ -269,7 +323,7 @@ namespace s10.Back.Controllers
         public List<QuejaResponseDTO> QuejasToDto(List<Queja> quejas)
         {
 
-           
+
             var quejasDTO = quejas.Select(x =>
                new QuejaResponseDTO
                {
@@ -282,8 +336,8 @@ namespace s10.Back.Controllers
                    Category_Name = x.Category.Name,
                    Category_ID = x.Category.Category_ID,
                    // District_ID = x.District_ID,
-                   Latitude = (x.Location?.Y)??0.0,
-                   Longitude = (x.Location?.X)??0.0,
+                   Latitude = (x.Location?.Y) ?? 0.0,
+                   Longitude = (x.Location?.X) ?? 0.0,
                    LikesCount = x.Favorites_Count
                }
            );

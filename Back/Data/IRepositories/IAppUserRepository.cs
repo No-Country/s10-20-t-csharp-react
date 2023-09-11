@@ -7,5 +7,7 @@ namespace s10.Back.Data.IRepositories
     {
         //TODO Esteban. acá no tengo que devolver un pagedlist
         Task<PagedList<AppUserDTO>?> GetByEmail(string email);
+
+        void Update(AppUser user);
     }
 }

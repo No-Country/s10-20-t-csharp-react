@@ -104,42 +104,38 @@ public class QuejasController : ControllerBase
         }
     }
 
-    [HttpPost]
+    [HttpPost("{id}/comments")]
     [Authorize]
-    [Route("{id}/comments")]
     [ResponseCache(CacheProfileName = "NoCache")]
-    public async Task<ActionResult<CommentResponseDTO>> CreateComment([FromQuery] CommentRequestDTO model, int id)
+    public async Task<ActionResult<CommentResponseDTO>> CreateComment(CommentRequestDTO model, int id)
     {
-        if (ModelState.IsValid)
-        {
-            var unitOfWork = new UnitOfWork(_context);
-            Comment comment = new Comment()
-            {
-                AddedAt = DateTime.UtcNow,
-                Complaint_ID = id,
-                Text = model.Text,
-                Id = "",
-                User_ID = unitOfWork
-                    .AppUsers
-                    .GetByEmail(User.FindFirstValue(ClaimTypes.Email))
-                    .Result!.First().User_ID, // tendría que existir sí o sí, porque al loguear crea el usuario, acá accedemos a un usuario logueado 
-            };
-            unitOfWork.Comments.Add(comment);
-            int changes = await unitOfWork.Complete();
-
-            if (changes > 0)
-            {
-                return Ok(model);
-            }
-            else
-            {
-                return BadRequest();
-            }
-        }
-        else
+        var unitOfWork = new UnitOfWork(_context);
+        //com[plaint should exist
+        if (_unitOfWork.Quejas.Get(id) == null)
         {
             return BadRequest();
         }
+
+        Comment comment = new Comment()
+        {
+            AddedAt = DateTime.UtcNow,
+            Complaint_ID = id,
+            Text = model.Text,
+            Id = User.FindFirstValue(ClaimTypes.NameIdentifier),
+            User_ID = User.FindFirstValue(ClaimTypes.NameIdentifier)
+        };
+        unitOfWork.Comments.Add(comment);
+        try
+        {
+            int changes = await unitOfWork.Complete();
+            return Created($"api/quejas/{id}/comments",null);
+        }
+        catch (Exception e)
+        {
+
+            throw;
+        }
+
     }
 
     [HttpGet]
@@ -180,9 +176,10 @@ public class QuejasController : ControllerBase
             #region WithUnitOfWorkPattern
             var unitOfWork = new UnitOfWork(_context);
             PagedList<QuejaResponseDTO> pagedView = unitOfWork.Quejas.GetFeed(input);
-            await unitOfWork.Complete();
+            await unitOfWork.Complete(); //TODO Aca no necesitas un complete porque no has hecho ningun cambio
             #endregion
-
+            //Siempre prefiere una propiedad a un metodo
+            //por ejemplo aca para retorna los valores de la  ruta  HttpContext.Request.Path
             return new PagedListResponse<QuejaResponseDTO>(
                 pagedView,
                 (HttpContext.GetEndpoint() as RouteEndpoint)!.RoutePattern.RawText!);
@@ -433,7 +430,7 @@ public class QuejasController : ControllerBase
     /// favorites a complaint, but if already favorited will change status to disabled
     /// </summary>
     /// <param name="id"></param>
-    
+
     [HttpPut("{id}/MeGusta")]
     //[Authorize]
     public async Task<ActionResult<bool>> MeGusta(int id)
@@ -441,13 +438,13 @@ public class QuejasController : ControllerBase
         var userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
 
         //for debug, delete
-        if( userEmail == null)
+        if (userEmail == null)
         {
             userEmail = "test@domain.com";
         }
 
         var complaint = _unitOfWork.Quejas.Get(id);
-        if(complaint == null)
+        if (complaint == null)
         {
             return BadRequest();
         }
@@ -457,7 +454,7 @@ public class QuejasController : ControllerBase
             .Favorites.GetAll()
             .FirstOrDefault(x => x.FavoritedBy == userEmail && x.Complaint_ID == id);
 
-        if(alreadyFavorited == null)
+        if (alreadyFavorited == null)
         {
             alreadyFavorited = new Favorite()
             {
