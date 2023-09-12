@@ -1,21 +1,29 @@
-import { useContext, useEffect, useReducer, useState } from "react";
+import { useContext, useReducer, useState } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
 
 import { MainLayout } from "../layout/MainLayout";
 import { LikeIcon } from "../components/atoms/corazon";
 import { CommentCard } from "../components/CommentCard";
 
 import { UserContext } from "../store/userContext";
-import FotoCalle from "../assets/subir.png";
+import { useComplains } from "../store/complainsContext";
 import ConfigIcon from "../assets/icons/configuracion.svg";
-import ProfileImg from "../assets/icons/profile_img.png";
 import LocationIcon from "../assets/icons/ubicacion2.svg";
 import ComentarioIcon from "../assets/icons/comentario.svg";
 import CompartirIcon from "../assets/icons/compartir.svg";
-import { ComplainsContext } from "../store/complainsContext";
 
-const ReportCard = () => {
+const ReportCard = ({
+  profileImg,
+  userName,
+  title,
+  description,
+  location,
+  likesCount,
+  category,
+  comments,
+  createdAt,
+  photoAddress,
+}) => {
   const [like, setLike] = useState(false);
   const [share, setShare] = useState(false);
   const [comment, setComment] = useState(false);
@@ -28,16 +36,16 @@ const ReportCard = () => {
             className="w-8 h-8 rounded-2xl"
             width="20"
             height="20"
-            src={ProfileImg}
+            src={profileImg}
             alt="Foto de perfil"
           />
           <div className="flex flex-col gap-4">
             <header className="flex flex-col gap-2">
-              <small>Nombre de usuario</small>
-              <h3>
-                <strong>Titulo del reporte</strong>
+              <small>{userName}</small>
+              <h3 className="w-[25ch]">
+                <strong>{title}</strong>
               </h3>
-              <p className="font-light">Descripción del reporte</p>
+              <p className="font-light">{description}</p>
             </header>
             <div className="flex flex-col gap-4">
               <div className="flex gap-2 items-center">
@@ -48,25 +56,30 @@ const ReportCard = () => {
                   src={LocationIcon}
                   alt="Icono de localización en un mapa"
                 />
-                <p className="text-slate-700">Nro 7 1555, La Plata</p>
+                <p className="text-slate-700">{location}</p>
               </div>
-              <a href="#" className="text-terciary-100">
+              <a
+                href="https://www.google.com/maps/place/La+Plata,+Provincia+de+Buenos+Aires/@-34.9184228,-57.9582372,14.21z/data=!4m6!3m5!1s0x95a2e62b1f0085a1:0xbcfc44f0547312e3!8m2!3d-34.9204948!4d-57.9535657!16zL20vMDIzYjk3?entry=ttu"
+                className="text-terciary-100 hover:text-terciary-50 transition-colors"
+                target="_blank"
+                referrerPolicy="no-referrer"
+              >
                 Ver en mapa
               </a>
             </div>
-            <div className="flex gap-2">
-              <img src={FotoCalle} alt="Foto del usuario" />
-              <img src={FotoCalle} alt="Foto del usuario" />
+            <div className="flex gap-2 w-60">
+              <img src={photoAddress} alt="Foto del usuario" />
             </div>
             <ul className="flex gap-8 justify-between">
               <li>
                 <button onClick={() => setLike(!like)} className="flex gap-2">
-                  1 <LikeIcon fill={`${like ? "#df2b2b" : "#111"}`} />
+                  {likesCount}{" "}
+                  <LikeIcon fill={`${like ? "#df2b2b" : "#111"}`} />
                 </button>
               </li>
               <li>
                 <button className="flex gap-2">
-                  1
+                  {comments}
                   <img
                     width="30"
                     height="30"
@@ -89,10 +102,12 @@ const ReportCard = () => {
             </ul>
           </div>
         </div>
+        <small className="text-slate-500">{createdAt} hs.</small>
+
         <div className="flex flex-col gap-2">
-          <Link>Ir a mis reportes</Link>
+          <Link to="/report">Ir a mis reportes</Link>
           <p className="p-2 border text-primary-100 text-center rounded-md">
-            Acera
+            {category}
           </p>
         </div>
       </div>
@@ -102,7 +117,7 @@ const ReportCard = () => {
 
 export function MyProfile() {
   const userContext = useContext(UserContext);
-  const complainsContext = useContext(ComplainsContext);
+  const complains = useComplains();
 
   const [elems, dispatch] = useReducer(
     (state, action) => {
@@ -116,15 +131,13 @@ export function MyProfile() {
         case "setReceivedComments":
           return { ...state, elems: action.payload };
         default:
-          return <ReportCard />;
+          return <ReportCard title={complainsContext.title} />;
       }
     },
     {
-      elems: [<ReportCard />],
+      elems: complains,
     }
   );
-
-  const handleClick = e => {};
 
   return (
     <div>
@@ -137,7 +150,7 @@ export function MyProfile() {
                   className="rounded-full"
                   width="80"
                   height="80"
-                  src={ProfileImg}
+                  src={userContext.picture_Url}
                   alt="Foto de perfil"
                 />
               </div>
@@ -175,7 +188,7 @@ export function MyProfile() {
                     onClick={() =>
                       dispatch({
                         type: "setComments",
-                        payload: [<CommentCard />, <CommentCard />],
+                        payload: [""],
                       })
                     }
                   >
@@ -188,7 +201,7 @@ export function MyProfile() {
                     onClick={() =>
                       dispatch({
                         type: "setFavorites",
-                        payload: [],
+                        payload: [""],
                       })
                     }
                   >
@@ -201,7 +214,7 @@ export function MyProfile() {
                     onClick={() =>
                       dispatch({
                         type: "setReceivedComments",
-                        payload: [],
+                        payload: [""],
                       })
                     }
                   >
@@ -211,8 +224,24 @@ export function MyProfile() {
               </ul>
             </nav>
             <ul className="flex flex-col gap-10">
-              {elems.elems.length > 0 ? (
-                elems.elems.map((elem, i) => <li key={i}>{elem}</li>)
+              {elems.elems.complains.length > 0 ? (
+                elems.elems.complains.map(complain => (
+                  <li key={complain.title}>
+                    <ReportCard
+                      title={complain.title}
+                      userName={complain.userName}
+                      profileImg={complain.userPhoto}
+                      likesCount={complain.likesCount ?? 0}
+                      category={complain.category_Name}
+                      location={complain.district_Name}
+                      comments={complain.comments.length}
+                      createdAt={new Date(complain.createdAt)
+                        .getHours()
+                        .toString()}
+                      photoAddress={complain.photoAdress}
+                    />
+                  </li>
+                ))
               ) : (
                 <p className="text-slate-700">No hay elementos</p>
               )}
