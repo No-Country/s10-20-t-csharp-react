@@ -1,6 +1,7 @@
 ﻿using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using NetTopologySuite.Geometries;
 using quejapp.Models;
 using s10.Back.Data;
@@ -128,7 +129,7 @@ public class QuejasController : ControllerBase
         try
         {
             int changes = await unitOfWork.Complete();
-            return Created($"api/quejas/{id}/comments",null);
+            return Created($"api/quejas/{id}/comments", null);
         }
         catch (Exception e)
         {
@@ -193,48 +194,18 @@ public class QuejasController : ControllerBase
 
     [HttpGet]
     [Route("{id}")]
-    [ResponseCache(CacheProfileName = "NoCache")]
-    public async Task<ActionResult<PagedListResponse<QuejaResponseDTO>>> GetById(int id)
+    public async Task<ActionResult<QuejaResponseDTO>> GetById(int id)
     {
-        #region WithFiles
-        //if (_quejas is null)
-        //{
-        //    _quejas = JsonConvert.DeserializeObject<List<Queja>>(System.IO.File.ReadAllText(@"./Back/Data/complaints.json"))!;
-        //}
-
-        //var laQueja = await _quejas.AsQueryable().Where(q => q.Complaint_ID == id).FirstOrDefaultAsync();
-        #endregion
-
-        #region SQLServer
-        //var query = _context.Queja.Where(q => q.Complaint_ID == id);
-        //var data = query
-        //.Include(q => q.Category)
-        //.Include(q => q.District)
-        //.Include(q => q.User)
-        //.Select(q => new QuejaResponseDTO
-        //{
-        //    Complaint_ID = q.Complaint_ID,
-        //    Text = q.Text,
-        //    Title = q.Title,
-        //    PhotoAdress = q.PhotoAdress,
-        //    VideoAddress = q.VideoAddress,
-        //    District_Name = q.District.Name,
-        //    UserName = q.User.Name,
-        //    Category_Name = q.Category.Name
-        //});
-        #endregion
-
-        #region WithUnitOfWorkPattern
         var unitOfWork = new UnitOfWork(_context);
-        var theQueja = unitOfWork.Quejas.GetPaged(id);
-        await unitOfWork.Complete();
-        #endregion
+        var theQueja = unitOfWork.Quejas.GetPaged(id).First();
 
         if (theQueja != null)
         {
-            return new PagedListResponse<QuejaResponseDTO>(
-                theQueja,
-                (HttpContext.GetEndpoint() as RouteEndpoint)!.RoutePattern.RawText!);
+            
+            theQueja.Location.Latitude = theQueja.Latitude.Value;
+            theQueja.Location.Longitude = theQueja.Longitude.Value;
+
+            return theQueja;
         }
         else
         {
@@ -247,104 +218,68 @@ public class QuejasController : ControllerBase
     [HttpPost]
     [Authorize]
     [ResponseCache(CacheProfileName = "NoCache")]
-    public async Task<ActionResult<QuejaResponseDTO>> Post([FromQuery] QuejaPostDTO model)
+    public async Task<ActionResult<QuejaResponseDTO>> Post([FromForm] QuejaPostDTO model)
     {
-        if (ModelState.IsValid)
+        IFormFile? file = model.media;
+        var uploadResult = new ImageUploadResult();
+
+        uploadResult = await _cloudinaryService.AddPhotoAsync(file);
+        if (uploadResult.Error is not null)
         {
-            #region WithFile
-            //if (_quejas is null)
-            //{
-            //    _quejas = JsonConvert.DeserializeObject<List<Queja>>(System.IO.File.ReadAllText(@"./Back/Data/complaints.json"))!;
-            //}
+            return Problem($"Error al crear la queja : No se pudo guardar la imagen: {uploadResult.Error}");
+        }
+        //model no usa distrito pero bd si
+        var district = _context.District.First();
 
-            //Queja queja = new()
-            //{
-            //    Category_ID = model.Category_ID,
-            //    Text = model.Text,
-            //    Title = model.Title,
-            //    User_ID = model.User_ID,
-            //    // TODO
-            //    //VideoAddress = model.VideoAddress,
-            //    //PhotoAdress = model.PhotoAdress,
-            //    District_ID = model.District_ID,
-            //    CreatedAt = DateTime.Now
-            //};
-            //_quejas.Add(queja);
-            #endregion
+        var unitOfWork = new UnitOfWork(_context);
+        Queja theQueja = new Queja()
+        {
+            Category_ID = model.Category_ID,
+            District_ID = district.District_ID,
+            Text = model.Text,
+            Title = model.Title,
+            PhotoAdress = "https://res.cloudinary.com" + uploadResult.SecureUrl.AbsolutePath,
+            User_ID = unitOfWork
+                .AppUsers
+                .GetByEmail(User.FindFirstValue(ClaimTypes.Email))
+                .Result!.First().User_ID,
+            CreatedAt = DateTime.Now,
+            IsAnonymous = model.IsAnonymous,
+            Location = model.Location == null ? null : _geometryFactory
+                .CreatePoint(new Coordinate(model.Location.Longitude, model.Location.Latitude))
+        };
 
-            #region SQLServer
-            //var uploadResult = new ImageUploadResult();
-            //IFormFile? file = model.media;
-            //// si lo guardado es nulo y se subió archivo o simplemente si se subió archivo
-            //if (file is not null)
-            //{
-
-            //    uploadResult = await _cloudinaryService.AddPhotoAsync(file!);
-            //    if (uploadResult.Error is not null)
-            //    {
-            //        return BadRequest(uploadResult.Error.Message);
-            //    }
-            //}
-            //var laQueja = new Queja()
-            //{
-            //    Category_ID = model.Category_ID,
-            //    District_ID = model.District_ID,
-            //    Text = model.Text,
-            //    Title = model.Title,
-            //    PhotoAdress = "http://res.cloudinary" + uploadResult.SecureUrl.AbsolutePath,
-            //    User_ID = model.User_ID//preguntar a DnTo,
-            //};
-            //await _context.Queja.AddAsync(laQueja);
-            #endregion
-
-            #region WithUnitOfWorkPattern
-            IFormFile? file = model.media;
-            var uploadResult = new ImageUploadResult();
-            if (file is not null)
+        try
+        {
+            //if category exists
+            var category = _unitOfWork.Categories.Get(model.Category_ID);
+            if (category != null)
             {
-                uploadResult = await _cloudinaryService.AddPhotoAsync(file);
-                if (uploadResult.Error is not null)
-                {
-                    return BadRequest("No se pudo guardar la imagen");
-                }
-                var unitOfWork = new UnitOfWork(_context);
-                Queja theQueja = new Queja()
-                {
-                    Category_ID = model.Category_ID,
-                    District_ID = model.District_ID,
-                    Text = model.Text,
-                    Title = model.Title,
-                    PhotoAdress = "https://res.cloudinary.com" + uploadResult.SecureUrl.AbsolutePath,
-                    User_ID = unitOfWork
-                        .AppUsers
-                        .GetByEmail(User.FindFirstValue(ClaimTypes.Email))
-                        .Result!.First().User_ID,
-                    CreatedAt = DateTime.Now,
-                    IsAnonymous = model.IsAnonymous,
-                    Location = _geometryFactory.CreatePoint(
-                        new NetTopologySuite.Geometries.Coordinate(model.Longitude, model.Latitude))
-                };
                 unitOfWork.Quejas.Add(theQueja);
                 int changes = await unitOfWork.Complete();
-                #endregion
-
-                if (changes > 0)
-                {
-                    return Ok(model);
-                }
-                else
-                {
-                    return BadRequest();
-                }
+                return Created($"api/quejas/{theQueja.Complaint_ID}", null);
             }
             else
             {
-                return BadRequest();
+                ModelState.AddModelError( nameof(model.Category_ID),"Category not found");
+                return BadRequest(ModelState);
+                    
             }
         }
-        else
+        catch (DbUpdateException e)
         {
-            return BadRequest();
+            //for debug return Database error 
+            return BadRequest(e.Message);
+        }
+        catch (Exception e)
+        {
+            var message = new string[] { e.Message }.AsEnumerable();
+            while (e.InnerException != null)
+            {
+                e = e.InnerException;
+                message = message.Append(e.Message + Environment.NewLine);
+            }
+            return Problem(String.Join(",", message));
         }
     }
 
