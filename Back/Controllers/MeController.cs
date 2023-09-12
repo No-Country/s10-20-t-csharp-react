@@ -43,24 +43,15 @@ namespace s10.Back.Controllers
         [HttpGet]
         public ActionResult<MeGetDto> Me()
         {
-            var claims = User.Identities
-                .FirstOrDefault().Claims;
             var userEmail = User.FindFirst(ClaimTypes.Email).Value;
             var user = _unitOfWork.AppUsers.Find(x => x.Email == userEmail).FirstOrDefault();
 
-            //TODO Get the user from Db, if not try to create it and return a DTO
-            //var user = _context.Usuarios.FirstOrDefault(x => x.Email.Equals(userEmail));
-            //if(User == null )
-            //{
-            //    //create User
-            //}
-            //from user, create DTO
             return new MeGetDto()
             {
                 Email = userEmail,
-                Name = (claims.FirstOrDefault(x => x.Type == ClaimTypes.Name)?.Value) ?? "",
-                GivenName = (claims.FirstOrDefault(x => x.Type == ClaimTypes.GivenName)?.Value) ?? "",
-                LastName = (claims.FirstOrDefault(x => x.Type == ClaimTypes.Surname)?.Value) ?? "",
+                Name = user.Name,
+                GivenName = user.GivenName ?? "",
+                LastName = user.LastName ?? "",
                 Picture_Url = user == null ? null : user.ProfilePicAddress,
                 Address = user == null ? null : user.Address
             };
@@ -71,18 +62,16 @@ namespace s10.Back.Controllers
         public async Task<ActionResult<MeGetDto>> MePatch(MePatchDto me)
         {
             var userEmail = User.FindFirst(ClaimTypes.Email)!.Value;
-            //  var _me = _unitOfWork.AppUsers.GetAll().Where(x => x.Email == userEmail).First();
             var _me = await _userManager.FindByEmailAsync(userEmail);
 
             _me.GivenName = me.GivenName ?? _me.GivenName;
             _me.LastName = me.LastName ?? _me.LastName;
             _me.Address = me.Address ?? _me.Address;
-            _me.Name = _me.GivenName +' '+ _me.LastName; //identity shpould calculate this
+            _me.Name = _me.GivenName + ' ' + _me.LastName; //identity shpould calculate this
 
             try
             {
                 //the user needs to be updated using userManager for name update? no because is from model
-
                 var updateResult = await _userManager.UpdateAsync(_me);
                 //_unitOfWork.AppUsers.Update(_me);
                 //await _unitOfWork.Complete();
@@ -118,7 +107,6 @@ namespace s10.Back.Controllers
         public async Task<ActionResult<UpdatePictureResult>> MePicture(IFormFile picture)
         {
             //TODO UserService
-
             var userEmail = User.FindFirstValue(ClaimTypes.Email);
             var user = await _unitOfWork.AppUsers
                 .GetAll()
@@ -159,13 +147,11 @@ namespace s10.Back.Controllers
                     Error = e.Message
                 };
             }
-
-
         }
 
 
         /// <summary>get all my complaints </summary>
-       // [Authorize]
+        [Authorize]
         [HttpGet("Quejas")]
         public ActionResult<PagedListResponse<QuejaResponseDTO>> GetMyComplaints([FromQuery] RequestDTO<object> pagedQuery, [FromServices] GeometryFactory _geometryFactory)
         {
@@ -201,12 +187,11 @@ namespace s10.Back.Controllers
             return response;
         }
 
-        //[Authorize]
+        [Authorize]
         [HttpGet("Comments/Left")]
         public async Task<ActionResult<PagedListResponse<CommentResponseDTO>>> GetCommentsLeft([FromQuery] RequestDTO<object> pagedQuery)
         {
-            //for debug, will choose first user with id 1 if not logged 
-            var email = User.FindFirst(ClaimTypes.Email)?.Value ?? _unitOfWork.AppUsers.Get(1).Email;
+            var email = User.FindFirst(ClaimTypes.Email)?.Value;
             var user = (await _unitOfWork.AppUsers.GetByEmail(email)).First();
 
             //TODO cambiar a ID
@@ -220,12 +205,12 @@ namespace s10.Back.Controllers
             return dtos;
         }
 
-        //[Authorize]
+        [Authorize]
         [HttpGet()]
         [Route("Comments/Received")]
         public async Task<ActionResult<PagedListResponse<CommentResponseDTO>>> GetCommentsReceived([FromQuery] RequestDTO<object> pagedQuery)
         {
-            var email = User.FindFirst(ClaimTypes.Email)?.Value ?? _unitOfWork.AppUsers.Get(1).Email;
+            var email = User.FindFirst(ClaimTypes.Email)?.Value;
             return await CommentsService_GetCommentsReceived(email);
         }
 
@@ -238,12 +223,12 @@ namespace s10.Back.Controllers
             return await CommentsService_GetCommentsReceived(email!, Complaint_Id);
         }
 
-
+        [Authorize]
         [HttpGet()]
         [Route("Favorites")]
         public async Task<ActionResult<PagedListResponse<QuejaResponseDTO>>> GetMyFavorites([FromQuery] RequestDTO<object> pagedQuery)
         {
-            var email = User.FindFirst(ClaimTypes.Email)?.Value ?? _unitOfWork.AppUsers.Get(1).Email;
+            var email = User.FindFirst(ClaimTypes.Email)?.Value;
             var user = (await _unitOfWork.AppUsers.GetByEmail(email)).First();
 
             var favorites = _unitOfWork.Favorites.GetAll()
