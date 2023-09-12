@@ -7,9 +7,19 @@ import PerfilImg from "../assets/icons/perfil.png";
 
 const ProfileModal = () => {
   return (
-    <div className="bg-white p-4 shadow-md absolute top-20 right-0 flex flex-col gap-2">
-      <Link to="/profile">Mi Perfil</Link>
-      <button to="/logout">Cerrar Sesión</button>
+    <div className="bg-white p-4 shadow-md absolute top-20 right-0 flex flex-col gap-2 rounded-md">
+      <Link
+        className="text-black hover:text-slate-600 transition-colors"
+        to="/profile"
+      >
+        Mi Perfil
+      </Link>
+      <button
+        className="text-black hover:text-slate-600 transition-colors"
+        to="/logout"
+      >
+        Cerrar Sesión
+      </button>
     </div>
   );
 };
@@ -25,7 +35,7 @@ const NotificationModal = () => {
           alt="Imagen de perfil del usuario"
         />
       </div>
-      <p>
+      <p className="text-black">
         <strong>Lorena Casa</strong> ha comentado tu reporte
       </p>
     </div>
@@ -43,10 +53,14 @@ export default function Navbar() {
       </Link>
       <ul className="flex gap-4">
         <Link to="/muro">
-          <li>Muro</li>
+          <li className="text-black hover:text-slate-600 transition-colors">
+            Muro
+          </li>
         </Link>
-        <Link to="/muro">
-          <li>Nuevo Reporte</li>
+        <Link to="/report">
+          <li className="text-black hover:text-slate-600 transition-colors">
+            Nuevo Reporte
+          </li>
         </Link>
         <div className="flex gap-4">
           <button>

@@ -14,6 +14,9 @@ import { MyProfile } from "../pages/MyProfile";
 import { EditProfile } from "../pages/EditProfile";
 import Muro from "../pages/Muro";
 
+import { UserProvider } from "../store/userContext";
+import { ComplainsProvider } from "../store/complainsContext";
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -31,10 +34,7 @@ const router = createBrowserRouter([
     path: "/register",
     element: <Register />,
   },
-  {
-    path: "/report",
-    element: <Report />,
-  },
+
   {
     path: "/profile",
     element: <MyProfile />,
@@ -58,5 +58,9 @@ const router = createBrowserRouter([
 ]);
 
 export function AppRouter() {
-  return <RouterProvider router={router} />;
+  return (
+    <ComplainsProvider>
+      <RouterProvider router={router} />
+    </ComplainsProvider>
+  );
 }

@@ -9,6 +9,7 @@ import { UserContext } from "../store/userContext";
 import imageFon from "../images/imageFon.png";
 import imageFonTwo from "../images/img_myreports.png";
 import { useNavigate } from "react-router-dom";
+import { MainLayout } from "../layout/MainLayout";
 
 const SignIn = () => {
   const userCtx = useContext(UserContext);
@@ -46,22 +47,13 @@ const SignIn = () => {
     <MainLayout>
       <>
         <div className="flex mt-12 gap-12 justify-center">
-          <div className="text-center justify-center">
-            <h1 className="font-bold text-xl">Bienvenidos a QuejLAP </h1>
-            <div className="">
-              <img src={imageFon} className="w-96"></img>
-              <img src={imageFonTwo} className="w-96"></img>
-            </div>
-          </div>
-
-          <main className="flex justify-end  items-center  gap-10 sm:gap-0 my-6 mx-2 sm:mx-5 md:mx-10">
-            <div className="basis-1/2 w-[50vh] flex flex-1 flex-col sm:gap-0 justify-center p-6 py-8 sm:py-6 lg:px-8 rounded-lg bg-gray-200 bg-opacity-60 shadow-md">
-              <h2 className="text-center text-2xl font-PoppinsBold leading-9 tracking-tight text-pallete-black">
-                {" "}
-                Iniciar Sesion{" "}
+          <main className="flex justify-end w-[30em] items-center  gap-10 sm:gap-0 my-6 mx-2 sm:mx-5 md:mx-10">
+            <div className="bg-white basis-1/2 w-[50vh] flex flex-1 flex-col sm:gap-0 justify-center p-6 py-8 sm:py-6 lg:px-8 rounded-lg shadow-md">
+              <h2 className="text-center text-2xl font-bold leading-9 tracking-tight text-black">
+                Iniciar Sesion
               </h2>
 
-              <div className="flex flex-col gap-6 sm:gap-4 mt-9 sm:mx-auto sm:w-full sm:max-w-sm">
+              <div className=" flex flex-col gap-6 sm:gap-4 mt-9 sm:mx-auto sm:w-full sm:max-w-sm">
                 <div>
                   <div className="mt-2">
                     <input
@@ -70,9 +62,9 @@ const SignIn = () => {
                       placeholder="Email"
                       type="text"
                       required
-                      className="input input-sm block w-full border border-black font-PoppinsRegular 
-                                            ring-pallete-grey focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6"
-                      onChange={e => setEmail(e.target.value)}
+                      className="p-2 bg-white rounded-md block w-full border border-black font-regular 
+                                            sm:text-sm sm:leading-6"
+                      onChange={e => setUser(e.target.value)}
                     />
                   </div>
                 </div>
@@ -83,48 +75,39 @@ const SignIn = () => {
                       id="Contraseña"
                       name="Contraseña"
                       placeholder="Contraseña"
-                      type="text"
+                      type="password"
                       required
-                      className="input input-sm block w-full border border-black font-PoppinsRegular 
-                                            ring-pallete-grey focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6"
+                      className="p-2 bg-white rounded-md block w-full border border-black font-regular 
+                                            sm:text-sm sm:leading-6"
                       onChange={e => setPassword(e.target.value)}
                     />
                     <div className="flex flex-grow justify-end">
-                      <p className="mt-2 text-xs text-black underline ml-[250px] cursor-pointer">
+                      <button className="mt-2 text-xs text-slate-700 underline cursor-pointer">
                         Olvide la contraseña
-                      </p>
+                      </button>
                     </div>
                   </div>
                 </div>
 
-                <div className="justify-center text-center mt-6 bg-blue-950 border rounded-xl">
-                  <button
-                    className=" bg-blue-950 border-none text-center  text-white"
-                    onClick={() => loginAccount()}
-                  >
-                    Iniciar Sesion
+                <button
+                  className="p-2 bg-terciary-100 hover:bg-terciary-50 transition-colors border-none text-center text-white rounded-2xl"
+                  onClick={() => loginAccount()}
+                >
+                  Iniciar Sesión
+                </button>
+                <p className="text-black text-center">O</p>
+
+                <div className="flex gap-2 justify-center items-center ">
+                  <FacebookIcon />
+                  <button className="p-2 w-full border border-terciary-100 text-black  bg-white rounded-2xl text-center font-regular">
+                    Iniciar Sesión con Google
                   </button>
                 </div>
 
-                <div>
-                  <div className="mt-2">
-                    <input
-                      id="Email"
-                      name="user"
-                      placeholder="Email"
-                      type="text"
-                      required
-                      className="input input-sm block w-full border border-black font-PoppinsRegular 
-                                            ring-pallete-grey focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6"
-                      onChange={e => setUser(e.target.value)}
-                    />
-                  </div>
-                </div>
-
-                <div className="justify-center text-center font-bold">
-                  <FacebookIcon className="mr-2 " />
-                  <button className="border-none  bg-white border text-sm rounded-xl">
-                    Iniciar Sesion con Meta
+                <div className="flex gap-2 justify-center items-center ">
+                  <FacebookIcon />
+                  <button className="p-2 w-full border border-terciary-100 text-black  bg-white rounded-2xl text-center font-regular">
+                    Iniciar Sesión con Meta
                   </button>
                 </div>
 
@@ -143,3 +126,5 @@ const SignIn = () => {
     </MainLayout>
   );
 };
+
+export default SignIn;
