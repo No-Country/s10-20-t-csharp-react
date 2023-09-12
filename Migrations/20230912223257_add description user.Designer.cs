@@ -13,8 +13,8 @@ using s10.Back.Data;
 namespace s10.Migrations
 {
     [DbContext(typeof(RedCoContext))]
-    [Migration("20230909012231_remove User_Id on AppUser")]
-    partial class removeUser_IdonAppUser
+    [Migration("20230912223257_add description user")]
+    partial class adddescriptionuser
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -172,6 +172,9 @@ namespace s10.Migrations
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")

@@ -53,6 +53,7 @@ namespace s10.Back.Controllers
                 Name = user.Name,
                 GivenName = user.GivenName ?? "",
                 LastName = user.LastName ?? "",
+                Description = user.Description,
                 Picture_Url = user == null ? null : user.ProfilePicAddress,
                 Address = user == null ? null : user.Address
             };
@@ -69,6 +70,7 @@ namespace s10.Back.Controllers
             _me.LastName = me.LastName ?? _me.LastName;
             _me.Address = me.Address ?? _me.Address;
             _me.Name = _me.GivenName + ' ' + _me.LastName; //identity shpould calculate this
+            _me.Description = me.Description ?? _me.Description;
 
             try
             {
@@ -83,6 +85,7 @@ namespace s10.Back.Controllers
                     Name = _me.Name,
                     GivenName = _me.GivenName,
                     LastName = _me.LastName,
+                    Description = _me.Description,
                     Picture_Url = _me.ProfilePicAddress,
                     Address = me.Address
                 };
