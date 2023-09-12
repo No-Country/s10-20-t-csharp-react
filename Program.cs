@@ -1,17 +1,21 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using NetTopologySuite;
 using NetTopologySuite.Geometries;
 using quejapp.Models;
+using s10.Back.Core.Common;
 using s10.Back.Data;
+using s10.Back.Services;
+using s10.Back.Services.Media;
 using s10.Back.Data.IRepositories;
 using s10.Back.Data.Repositories;
 using s10.Back.Handler;
-
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +27,25 @@ builder.Services.AddDbContext<RedCoContext>(
 
 builder.Services.AddScoped<ICloudinaryService, CloudinaryHelper>();
 
+
+#region Youtube
+builder.Services.AddHostedService<LongRunningService>();
+builder.Services.AddSingleton<BackgroundWorkerQueue>();
+builder.Services.AddTransient<IVideoUploadService,YoutubeVideoUploadService>();
+builder.Services.AddTransient<UploadVideoService>();
+
+builder.Services.Configure<KestrelServerOptions>(options =>
+{
+    options.Limits.MaxRequestBodySize = int.MaxValue; 
+});
+builder.Services.Configure<FormOptions>(options =>
+{
+    //limit to 128 MB
+    options.MultipartBodyLengthLimit = 134217728;
+});
+
+
+#endregion
 
 #region Auth
 
