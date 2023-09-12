@@ -9,8 +9,11 @@ namespace s10.Back.DTO
         public int Complaint_ID { get; set; }
         public string Title { get; set; } = string.Empty;
         public string Text { get; set; } = string.Empty;
-        public double Longitude { get; set; }
-        public double Latitude { get; set; }
+        public double? Longitude { get; set; }
+        public double? Latitude { get; set; }
+        public Location? Location { get; set; } = new();
+
+        
         public string? VideoAddress { get; set; }
         public string? PhotoAdress { get; set; }
         //public int? District_ID { get; set; } // se requiere joints
