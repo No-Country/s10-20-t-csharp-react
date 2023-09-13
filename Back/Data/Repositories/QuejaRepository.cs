@@ -41,11 +41,11 @@ public class QuejaRepository : GenericRepository<Queja>, IQuejaRepository
             .Include(q => q.District)
             .Include(q => q.User)
             .Include(q => q.Comments)
-            .ThenInclude( x => x.User)
+            .ThenInclude(x => x.User)
 
-           // .ToList()
-           // ;
-//            viewFeed
+            // .ToList()
+            // ;
+            //            viewFeed
             .Select(q => new QuejaResponseDTO
             {
                 Complaint_ID = q.Complaint_ID,
@@ -60,7 +60,9 @@ public class QuejaRepository : GenericRepository<Queja>, IQuejaRepository
                 CreatedAt = q.CreatedAt,
                 Longitude = q.Location != null ? q.Location.X : 0,
                 Latitude = q.Location != null ? q.Location.Y : 0,
-                Comments =  CommentResponseDTO.ToCommentResponseDTO(q.Comments.Take(5))
+                Location = q.Location ==null?null:new DTO.Location() { Longitude = q.Location.X, Latitude = q.Location.Y },
+                Comments = CommentResponseDTO
+                .ToCommentResponseDTO(q.Comments.OrderBy( x => x.AddedAt).Take(5))
 
             })
              .OrderBy($"{model.SortColumn} {model.SortOrder}");

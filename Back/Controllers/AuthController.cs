@@ -31,14 +31,16 @@ namespace s10.Back.Controllers
         [HttpGet("IsAuthenticated")]
         public ActionResult Authenticated()
         {
-            return Ok(new { IsAuthenticated = (User.Identity?.IsAuthenticated) ?? false });
+            return (User.Identity.IsAuthenticated) ?
+                Ok(new { IsAuthenticated = true }) :
+                Unauthorized(new { IsAuthenticated = false });
         }
 
         [Authorize]
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
-            await HttpContext.SignOutAsync();
+            await _signInManager.SignOutAsync();
             return Ok(new { loggedOut = true });
         }
 

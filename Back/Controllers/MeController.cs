@@ -19,6 +19,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security.Claims;
 using System.Xml.Linq;
+using Location = s10.Back.DTO.Location;
 
 namespace s10.Back.Controllers
 {
@@ -52,6 +53,7 @@ namespace s10.Back.Controllers
                 Name = user.Name,
                 GivenName = user.GivenName ?? "",
                 LastName = user.LastName ?? "",
+                Description = user.Description,
                 Picture_Url = user == null ? null : user.ProfilePicAddress,
                 Address = user == null ? null : user.Address
             };
@@ -68,6 +70,7 @@ namespace s10.Back.Controllers
             _me.LastName = me.LastName ?? _me.LastName;
             _me.Address = me.Address ?? _me.Address;
             _me.Name = _me.GivenName + ' ' + _me.LastName; //identity shpould calculate this
+            _me.Description = me.Description ?? _me.Description;
 
             try
             {
@@ -82,6 +85,7 @@ namespace s10.Back.Controllers
                     Name = _me.Name,
                     GivenName = _me.GivenName,
                     LastName = _me.LastName,
+                    Description = _me.Description,
                     Picture_Url = _me.ProfilePicAddress,
                     Address = me.Address
                 };
@@ -307,8 +311,6 @@ namespace s10.Back.Controllers
         [NonAction]
         public List<QuejaResponseDTO> QuejasToDto(List<Queja> quejas)
         {
-
-
             var quejasDTO = quejas.Select(x =>
                new QuejaResponseDTO
                {
@@ -321,14 +323,12 @@ namespace s10.Back.Controllers
                    Category_Name = x.Category.Name,
                    Category_ID = x.Category.Category_ID,
                    // District_ID = x.District_ID,
-                   Latitude = (x.Location?.Y) ?? 0.0,
-                   Longitude = (x.Location?.X) ?? 0.0,
+                   Latitude = (x.Location?.Y) ?? null,
+                   Longitude = (x.Location?.X) ?? null,
+                   Location = x.Location!=null? new Location() { Latitude= x.Location.X, Longitude= x.Location.Y } :null,
                    LikesCount = x.Favorites_Count
                }
            );
-            //var geometryFactory = new GeometryFactory();
-            //geometryFactory.
-
             return quejasDTO.ToList();
         }
     }
