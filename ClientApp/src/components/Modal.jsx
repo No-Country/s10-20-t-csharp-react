@@ -2,6 +2,7 @@ import { useForm } from 'react-hook-form'
 import axios from 'axios'
 import { useState } from 'react'
 import District from '../data/District'
+import ImageUpload from './ImageUpload'
 
 const Modal = () => {
     const { register, handleSubmit, formState: { errors } } = useForm()
@@ -10,11 +11,12 @@ const Modal = () => {
     const [close, setClose] = useState(false)
 
     const onSubmit = data => {
-        data.user_ID = 1
+        data.district_ID = `${ubication}`
+        data.photoAdress = localStorage.getItem('complaintImage')
         console.log(data)
-        axios.post('https://s10nc.somee.com/api/Quejas', data).then(res => {
+        /*axios.post('https://s10nc.somee.com/api/Quejas', data).then(res => {
             console.log("Respuesta API: ", res)
-        })
+        })*/
         console.log("id: ", ubication)
     }
 
@@ -28,12 +30,13 @@ const Modal = () => {
                 </div>
                 <div className='flex justify-start items-center w-full'>
                     <details className="dropdown">
-                        <summary className="m-1 btn capitalize bg-white text-black hover:bg-[#1E3756] hover:text-white" onClick={() => setClose(!close)}>Seleccione ubicación</summary>
-                        <ul className={`p-2 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-52 ${close ? "hidden" : "flex"}`}>
+                        <summary className="m-1 btn capitalize bg-white text-black hover:bg-[#1E3756] hover:text-white" >Seleccione ubicación</summary>
+                        <ul className={`p-2 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-52 ${close ? 'flex' : 'hidden'}`}>
                             {
                                 District.map((item) => (
-                                    <li key={item.District_ID}><a className="text-xs" onClick={() => {
+                                    <li key={item.District_ID} onClick={() => setClose(true)}><a className="text-xs" onClick={() => {
                                         setUbication(item.District_ID)
+                                       // setClose(!close)
                                     }}>{item.Name}</a></li>
                                 ))
                             }
@@ -52,8 +55,8 @@ const Modal = () => {
                 </div>
 
                 <div className="w-full">
-                    <p className="text-black">Subir Fotos y Videos</p>
-                    <button className="border-black border-[1.8px] pl-4 pr-4 pt-2 pb-2 rounded-md text-black">Examinar</button>
+                    <p className="text-black mb-3">Subir Foto</p>
+                    <ImageUpload />
                 </div>
 
                 <div className="flex flex-col mt-4 w-full">
