@@ -1,11 +1,14 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import NotificationIcon from "../assets/icons/notificaciones.svg";
 import PerfilIcon from "../assets/icons/perfil.svg";
 import PerfilImg from "../assets/icons/perfil.png";
+import axios from "axios";
 
 const ProfileModal = () => {
+  const navigate = useNavigate()
+
   return (
     <div className="bg-white p-4 shadow-md absolute top-20 right-0 flex flex-col gap-2 rounded-md">
       <Link
@@ -17,6 +20,7 @@ const ProfileModal = () => {
       <button
         className="text-black hover:text-slate-600 transition-colors"
         to="/logout"
+        onClick={() => axios.post("https://s10nc.somee.com/api/auth/logout").then(navigate("/")).catch(err => console.error(err))}
       >
         Cerrar Sesión
       </button>
