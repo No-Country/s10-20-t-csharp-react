@@ -50,7 +50,7 @@ export function MyProfile() {
     <div>
       <MainLayout>
         <section className="pt-16 pb-20">
-          <div className="w-[45em] mx-auto border border-slate-400 shadow-sm p-4 flex flex-col gap-8 font-normal rounded-2xl">
+          <div className="w-[30em] sm:w-full mx-auto border border-slate-400 shadow-sm p-4 flex flex-col gap-8 font-normal rounded-2xl">
             <div className="flex gap-8 items-center ">
               <div className="relative flex justify-center items-center">
                 <img
@@ -74,13 +74,13 @@ export function MyProfile() {
               </Link>
             </div>
             <nav>
-              <ul className="flex gap-4 justify-between font-light">
+              <ul className="flex sm:flex-col sm:items-center gap-4 sm:gap-2 justify-between font-light">
                 <li className="">
                   <button
                     aria-selected="true"
                     className={`p-2 ${
                       which.publicaciones ? "border-t-2" : ""
-                    } text-black`}
+                    } text-black sm:text-sm`}
                     onClick={e => {
                       setWhich({
                         publicaciones: true,
@@ -101,7 +101,7 @@ export function MyProfile() {
                   <button
                     className={`p-2 ${
                       which.comentarios ? "border-t-2" : ""
-                    } text-black`}
+                    } text-black sm:text-sm`}
                     onClick={() => {
                       setWhich({
                         publicaciones: false,
@@ -122,7 +122,7 @@ export function MyProfile() {
                   <button
                     className={`p-2 ${
                       which.favoritos ? "border-t-2" : ""
-                    } text-black`}
+                    } text-black sm:text-sm`}
                     onClick={() => {
                       setWhich({
                         publicaciones: false,
@@ -143,7 +143,7 @@ export function MyProfile() {
                   <button
                     className={`p-2 ${
                       which.comentariosRecibidos ? "border-t-2" : ""
-                    } text-black`}
+                    } text-black sm:text-sm`}
                     onClick={() => {
                       setWhich({
                         publicaciones: false,
@@ -184,25 +184,33 @@ export function MyProfile() {
                     </li>
                   ))
                 ) : (
-                  <p className="text-slate-700">No hay elementos</p>
+                  <p className="text-slate-700 sm:text-center">
+                    No hay elementos
+                  </p>
                 )
               ) : which.comentarios ? (
                 commentsContext?.length > 0 ? (
                   JSON.stringify(commentsContext)
                 ) : (
-                  <p className="text-slate-700">No hay comentarios</p>
+                  <p className="text-slate-700 sm:text-center">
+                    No hay comentarios
+                  </p>
                 )
               ) : which.favoritos ? (
                 favoritesContext?.length > 0 ? (
                   JSON.stringify(favoritesContext)
                 ) : (
-                  <p className="text-slate-700">No hay favoritos</p>
+                  <p className="text-slate-700 sm:text-center">
+                    No hay favoritos
+                  </p>
                 )
               ) : which.comentariosRecibidos ? (
                 commentsReceivedContext?.length > 0 ? (
                   JSON.stringify(commentsReceivedContext)
                 ) : (
-                  <p className="text-slate-700">No hay comentarios</p>
+                  <p className="text-slate-700 sm:text-center">
+                    No hay comentarios
+                  </p>
                 )
               ) : null}
             </ul>
