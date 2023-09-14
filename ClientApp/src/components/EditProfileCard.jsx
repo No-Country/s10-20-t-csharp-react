@@ -12,15 +12,21 @@ export function EditProfileCard() {
 
   const userContext = useContext(UserContext);
 
+  const token = localStorage.getItem("userSession");
+
+  const config = {
+    headers: { Authorizaton: `Bearer ${token}` },
+  };
+
   return (
     <form
-      className="p-4 sm:p-2 bg-white flex sm:flex-col sm:items-center gap-4 border border-slate-500 rounded-2xl w-[40em] sm:w-[20em]"
+      className="p-4 bg-white flex gap-4 border border-slate-500 rounded-2xl w-[40em]"
       method="post"
       encType="multipart/form-data"
       onSubmit={handleSubmit(data => {
         console.log(data);
         axios
-          .put("https://s10nc.somee.com/api/me", data)
+          .patch("https://s10nc.somee.com/api/me", config)
           .then(res => {
             console.log(res.status);
             alert("Datos cambiados");
