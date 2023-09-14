@@ -14,8 +14,11 @@ import { MyProfile } from "../pages/MyProfile";
 import { EditProfile } from "../pages/EditProfile";
 import Muro from "../pages/Muro";
 
-import { UserProvider } from "../store/userContext";
 import { ComplainsProvider } from "../store/complainsContext";
+import { UserContextProvider } from "../store/usrContext";
+import { CommentsProvider } from "../store/commentsContext";
+import { CommentsReceivedProvider } from "../store/commentsReceived";
+import { FavoriteProvider } from "../store/favoritesContext";
 
 const router = createBrowserRouter([
   {
@@ -59,8 +62,16 @@ const router = createBrowserRouter([
 
 export function AppRouter() {
   return (
-    <ComplainsProvider>
-      <RouterProvider router={router} />
-    </ComplainsProvider>
+    <UserContextProvider>
+      <CommentsReceivedProvider>
+        <FavoriteProvider>
+          <CommentsProvider>
+            <ComplainsProvider>
+              <RouterProvider router={router} />
+            </ComplainsProvider>
+          </CommentsProvider>
+        </FavoriteProvider>
+      </CommentsReceivedProvider>
+    </UserContextProvider>
   );
 }
