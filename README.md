@@ -30,7 +30,7 @@ En la misma se puede:
 - **Daniel Torres**: Desarrollador Back-end
 
 ## Hosting
-[Link]() de la aplicación web. 
+[Link](https://s10nc.somee.com/) de la aplicación web. 
 
 [React.js]: https://img.shields.io/badge/react.js-61DAFB?style=for-the-badge&logo=react&logoColor=white
 [TailwindCSS]: https://img.shields.io/badge/tailwindcss-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white
