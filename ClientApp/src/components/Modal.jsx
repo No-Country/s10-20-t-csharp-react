@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Modal = () => {
   const {
@@ -10,13 +10,30 @@ const Modal = () => {
     formState: { errors },
   } = useForm();
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const token = localStorage.getItem("userSession");
+
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "multipart/form-data",
+    },
+  };
 
   const onSubmit = data => {
-    data.user_ID = 1;
     console.log(data);
-    axios.post("https://s10nc.somee.com/api/Quejas", data).then(res => {
-      console.log("Respuesta API: ", res).catch(err => console.error(err));
-    });
+    axios
+      .post("https://s10nc.somee.com/api/quejas/queja2", data, config)
+      .then(res => {
+        alert("Publicación generada");
+        console.log("Respuesta API: ", res);
+        navigate("/muro").catch(err => console.error(err));
+      })
+      .catch(err => {
+        console.error(err);
+        alert("Hubo un error al generar un reporte");
+      });
   };
 
   return (
@@ -26,7 +43,6 @@ const Modal = () => {
       } `}
     >
       <form
-        action="#"
         className="flex flex-col gap-4 bg-white items-center w-fit p-10 rounded-xl"
         onSubmit={handleSubmit(onSubmit)}
       >
@@ -44,26 +60,29 @@ const Modal = () => {
           </svg>
         </div>
         <div className="w-full">
-          <label htmlFor="#" className="text-black">
+          <label htmlFor="title" className="text-black">
             Título:
           </label>
           <input
             type="text"
-            name="#"
-            id="#"
+            name="title"
+            id="title"
             className="p-2 w-full rounded-xl border-black border-[1.8px] bg-white"
-            {...register("title", { required: true })}
+            {...register("Title", { required: true })}
           />
         </div>
         <div className="w-full relative">
           {/*<label htmlFor="#" className="absolute mt-2 pl-2 font-medium">Categoría</label>*/}
           <input
-            type="text"
-            name="#"
-            id="#"
+            type="number"
+            name="category_ID"
+            id="category_ID"
             className="p-2 w-full rounded-xl bg-white border-black border-[1.8px] placeholder:text-black"
             placeholder="Categoría"
-            {...register("category_ID", { required: true })}
+            {...register("Category_ID", {
+              required: true,
+              setValueAs: v => parseInt(v),
+            })}
           />
         </div>
         <div className="w-full relative">
@@ -73,11 +92,12 @@ const Modal = () => {
             cols={55}
             className="rounded-xl bg-white border-black border-[1.5px] p-2 placeholder:text-black"
             placeholder="Descripción"
-            {...register("text", { required: true })}
+            name="text"
+            {...register("Text", { required: true })}
           />
         </div>
         <div className="w-full">
-          <label htmlFor="#" className="absolute p-2 mt-1">
+          <label htmlFor="district_Name" className="absolute p-2 mt-1">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               height="1em"
@@ -88,21 +108,22 @@ const Modal = () => {
           </label>
           <input
             type="text"
-            name="#"
-            id="#"
+            name="district_Name"
+            id="district_Name"
             className="p-2 w-full rounded-xl bg-white border-black border-[1.8px]"
-            {...register("district_ID", { required: true })}
+            {...register("district_Name", { required: true })}
           />
         </div>
 
         <div className="w-full">
-          <p className="text-black font-bold">Subir Fotos y Vídeos</p>
+          <p className="text-black font-bold">Subir Fotos</p>
           <input
-            id="image_upload"
-            name="image_upload"
+            id="media"
+            name="media"
             className="file:border-terciary-100 file:p-2 file:rounded-md file:bg-white"
             type="file"
             accept=".jpg, .jpeg, .png"
+            {...register("media")}
           />
         </div>
 
@@ -111,8 +132,8 @@ const Modal = () => {
             <p>¿Desea que su queja sea anónima?</p>
             <input
               type="checkbox"
-              name=""
-              id=""
+              name="anonymous"
+              id="anonymous"
               className="bg-white p-2 rounded-md"
             />
           </div>
@@ -123,14 +144,18 @@ const Modal = () => {
             </Link>
             <input
               type="checkbox"
-              name=""
-              id=""
+              name="terms"
+              id="terms"
               className="bg-white p-2 rounded-md"
+              required
             />
           </div>
         </div>
 
-        <button className="font-bold p-2 bg-terciary-100 hover:bg-terciary-50 text-white w-full rounded-lg mt-4">
+        <button
+          type="submit"
+          className="font-bold p-2 bg-terciary-100 hover:bg-terciary-50 text-white w-full rounded-lg mt-4"
+        >
           Publicar
         </button>
       </form>
