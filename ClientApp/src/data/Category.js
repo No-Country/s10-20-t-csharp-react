@@ -1,0 +1,36 @@
+const Category = [
+    {
+      "Category_ID": 1,
+      "Name": "Aguas"
+    },
+    {
+      "Category_ID": 2,
+      "Name": "Alumbrado Público"
+    },
+    {
+      "Category_ID": 3,
+      "Name": "Arbolado"
+    },
+    {
+      "Category_ID": 4,
+      "Name": "Atención al ciudadano"
+    },
+    {
+      "Category_ID": 5,
+      "Name": "Cloaca"
+    },
+    {
+      "Category_ID": 6,
+      "Name": "Industria y Comercio"
+    },
+    {
+      "Category_ID": 7,
+      "Name": "Parques y Plazas"
+    },
+    {
+      "Category_ID": 8,
+      "Name": "Servicion Públicos"
+    }
+]
+
+export default Category
