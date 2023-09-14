@@ -7,15 +7,13 @@ import Landing from "../pages/landing";
 import { NotFound } from "../pages/404NotFound";
 import SignIn from "../pages/SignIn";
 import Register from "../pages/Register";
-import Report from "../pages/report";
 import MyReports from "../pages/MyReports";
-import NewReport from "../pages/NewReport";
 import { MyProfile } from "../pages/MyProfile";
 import { EditProfile } from "../pages/EditProfile";
 import Muro from "../pages/Muro";
 
 import { ComplainsProvider } from "../store/complainsContext";
-import { UserContextProvider } from "../store/usrContext";
+import { UserProvider } from "../store/userContext";
 import { CommentsProvider } from "../store/commentsContext";
 import { CommentsReceivedProvider } from "../store/commentsReceived";
 import { FavoriteProvider } from "../store/favoritesContext";
@@ -62,7 +60,7 @@ const router = createBrowserRouter([
 
 export function AppRouter() {
   return (
-    <UserContextProvider>
+    <UserProvider>
       <CommentsReceivedProvider>
         <FavoriteProvider>
           <CommentsProvider>
@@ -72,6 +70,6 @@ export function AppRouter() {
           </CommentsProvider>
         </FavoriteProvider>
       </CommentsReceivedProvider>
-    </UserContextProvider>
+    </UserProvider>
   );
 }
