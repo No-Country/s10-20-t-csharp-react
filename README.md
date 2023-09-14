@@ -14,6 +14,7 @@ En la misma se puede:
 - ![TailwindCSS][TailwindCSS]
 - ![Cloudinary][Cloudinary]
 - ![Axios][Axios]
+- ![react-hook-form][react-hook-form]
 
 ### Back-end
 - ![ASPNET][ASPNET]
@@ -36,6 +37,7 @@ En la misma se puede:
 [TailwindCSS]: https://img.shields.io/badge/tailwindcss-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white
 [Cloudinary]: https://img.shields.io/badge/cloudinary-61DAFB?style=for-the-badge&logo=cloudinary&logoColor=white
 [Axios]: https://img.shields.io/badge/axios-5A29E4?style=for-the-badge&logo=axios&logoColor=white
+[react-hook-form]: https://img.shields.io/badge/reacthookform-EC5990?style=for-the-badge&logo=reacthookform&logoColor=white
 [ASPNET]: https://img.shields.io/badge/.net-512BD4?style=for-the-badge&logo=dotnet&logoColor=white
 [SQL Server]: https://img.shields.io/badge/sqlserver-CC2927?style=for-the-badge&logo=microsoftsqlserver&logoColor=white
 [Youtube API v3]: https://img.shields.io/badge/youtube-api-FF0000?style=for-the-badge&logo=youtube&logoColor=white
