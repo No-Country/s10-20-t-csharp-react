@@ -283,6 +283,25 @@ public class QuejasController : ControllerBase
         }
     }
 
+
+    [HttpPost("queja2")]
+    [Authorize]
+    [ResponseCache(CacheProfileName = "NoCache")]
+    public async Task<ActionResult<QuejaResponseDTO>> Post([FromForm] QuejaPostDTO2 model)
+    {
+        QuejaPostDTO queja = new QuejaPostDTO()
+        {
+            Category_ID = model.Category_ID,
+            IsAnonymous = model.IsAnonymous,
+            Location = model.Location,
+            media   = model.media[0],
+            Text = model.Text,
+            Title   = model.Title
+        };
+        return await Post(queja);
+    }
+
+
     [HttpPatch]
     [Authorize]
     [Route("{id}")]
