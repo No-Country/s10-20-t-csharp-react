@@ -1,9 +1,9 @@
 import { useState, useContext } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import MarkUnreadChatAltIcon from "@mui/icons-material/MarkUnreadChatAlt";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import ShareIcon from "@mui/icons-material/Share";
+//import MarkUnreadChatAltIcon from "@mui/icons-material/MarkUnreadChatAlt";
+//import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+//import ShareIcon from "@mui/icons-material/Share";
 
 import { UserContext } from "../store/userContext";
 import { LikeIcon } from "../components/atoms/corazon";

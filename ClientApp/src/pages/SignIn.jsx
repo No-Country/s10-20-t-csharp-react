@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import GoogleIcon from "@mui/icons-material/Google";
+//import GoogleIcon from "@mui/icons-material/Google";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import axios from "axios";
 import { useState, useEffect } from "react";
@@ -10,6 +10,7 @@ import imageFon from "../images/imageFon.png";
 import imageFonTwo from "../images/img_myreports.png";
 import { useNavigate } from "react-router-dom";
 import { MainLayout } from "../layout/MainLayout";
+import { GoogleIcon } from "../components/atoms/GoogleIcon";
 
 const SignIn = () => {
   const userCtx = useContext(UserContext);
@@ -27,7 +28,7 @@ const SignIn = () => {
       .post("https://s10nc.somee.com/api/Auth/login", userToLog)
       .then(res => {
         if (res.data.token) {
-          localStorage.setItem("userSession", JSON.stringify(res.data.token));
+          localStorage.setItem("userSession", res.data.token);
         } else {
           console.error("Hubo un error al iniciar sesión");
         }
@@ -100,7 +101,7 @@ const SignIn = () => {
                 <p className="text-black text-center">O</p>
 
                 <div className="flex gap-2 justify-center items-center ">
-                  <GoogleIcon />
+                  <GoogleIcon/>
                   <button className="p-2 w-full border border-terciary-100 text-black  bg-white rounded-2xl text-center font-regular">
                     Iniciar Sesión con Google
                   </button>
