@@ -16,7 +16,7 @@ const SignIn = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState("");
   const [password, setPassword] = useState("");
-  const [redirect_to, setRedirect_to] = useState("hola");
+  const [redirect_to, setRedirect_to] = useState();
 
   const loginAccount = () => {
     const userToLog = {
@@ -24,16 +24,16 @@ const SignIn = () => {
       password: password,
       redirect_to: redirect_to,
     };
+
     axios
       .post("https://s10nc.somee.com/api/Auth/login", userToLog)
       .then(res => {
-        console.log(res.data);
+        localStorage.setItem("userSession", JSON.stringify(userToLog));
         setTimeout(() => {
           userCtx.updateUserName(res.data.name);
           userCtx.updateUserEmail(res.data.email);
           userCtx.updateUserProfileImage(res.data.picture_Url);
         }, 400);
-
         setTimeout(() => {
           navigate("/muro");
         });
@@ -50,7 +50,7 @@ const SignIn = () => {
           <main className="flex justify-end w-[30em] items-center  gap-10 sm:gap-0 my-6 mx-2 sm:mx-5 md:mx-10">
             <div className="bg-white basis-1/2 w-[50vh] flex flex-1 flex-col sm:gap-0 justify-center p-6 py-8 sm:py-6 lg:px-8 rounded-lg shadow-md">
               <h2 className="text-center text-2xl font-bold leading-9 tracking-tight text-black">
-                Iniciar Sesion
+                Iniciar Sesión
               </h2>
 
               <div className=" flex flex-col gap-6 sm:gap-4 mt-9 sm:mx-auto sm:w-full sm:max-w-sm">
@@ -62,7 +62,7 @@ const SignIn = () => {
                       placeholder="Email"
                       type="text"
                       required
-                      className="p-2 bg-white rounded-md block w-full border border-black font-regular 
+                      className="p-2 bg-white rounded-md block w-full border border-black font-regular text-black
                                             sm:text-sm sm:leading-6"
                       onChange={e => setUser(e.target.value)}
                     />
@@ -77,7 +77,7 @@ const SignIn = () => {
                       placeholder="Contraseña"
                       type="password"
                       required
-                      className="p-2 bg-white rounded-md block w-full border border-black font-regular 
+                      className="p-2 bg-white rounded-md block w-full border border-black font-regular text-black
                                             sm:text-sm sm:leading-6"
                       onChange={e => setPassword(e.target.value)}
                     />
@@ -90,7 +90,7 @@ const SignIn = () => {
                 </div>
 
                 <button
-                  className="p-2 bg-terciary-100 hover:bg-terciary-50 transition-colors border-none text-center text-white rounded-2xl"
+                  className="p-2 bg-terciary-100 hover:bg-terciary-50 transition-colors border-none text-center font-bold text-white rounded-2xl"
                   onClick={() => loginAccount()}
                 >
                   Iniciar Sesión
@@ -113,7 +113,7 @@ const SignIn = () => {
 
                 <div className="flex flex-col gap-3 mt-5 mx-auto items-center justify-center">
                   <Link to={"/register"}>
-                    <p className=" text-center underline text-xs sm:text-sm font-PoppinsSemibold text-pallete-grey">
+                    <p className="text-slate-700 text-center text-xs sm:text-sm font-semibold">
                       Registrarse con Email
                     </p>
                   </Link>

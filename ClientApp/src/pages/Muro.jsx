@@ -75,7 +75,7 @@ const Muro = () => {
 
               <div className="flex flex-col gap-6">
                 {allPublications.map(p => (
-                  <div className="flex flex-col gap-4" key={p.id}>
+                  <div className="flex flex-col gap-4" key={p.complaint_ID}>
                     <MuroPublicationStructure pub={p} />
                   </div>
                 ))}
