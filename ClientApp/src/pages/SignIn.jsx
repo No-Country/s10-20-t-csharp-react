@@ -16,19 +16,21 @@ const SignIn = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState("");
   const [password, setPassword] = useState("");
-  const [redirect_to, setRedirect_to] = useState();
 
   const loginAccount = () => {
     const userToLog = {
       user: user,
       password: password,
-      redirect_to: redirect_to,
     };
 
     axios
       .post("https://s10nc.somee.com/api/Auth/login", userToLog)
       .then(res => {
-        localStorage.setItem("userSession", JSON.stringify(userToLog));
+        if (res.data.token) {
+          localStorage.setItem("userSession", JSON.stringify(res.data.token));
+        } else {
+          console.error("Hubo un error al iniciar sesión");
+        }
         setTimeout(() => {
           userCtx.updateUserName(res.data.name);
           userCtx.updateUserEmail(res.data.email);
@@ -98,7 +100,7 @@ const SignIn = () => {
                 <p className="text-black text-center">O</p>
 
                 <div className="flex gap-2 justify-center items-center ">
-                  <FacebookIcon />
+                  <GoogleIcon />
                   <button className="p-2 w-full border border-terciary-100 text-black  bg-white rounded-2xl text-center font-regular">
                     Iniciar Sesión con Google
                   </button>

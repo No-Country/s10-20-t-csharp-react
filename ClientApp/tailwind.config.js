@@ -28,9 +28,13 @@ module.exports = {
       },
       borderRadius: {
         '2xl': "20px"
+      },
+      screens: {
+        "sm": "320px",
+        "md": "768px",
+        "lg": "1024px"
       }
     },
   },
-  plugins: [require("daisyui")],
 };
 

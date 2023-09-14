@@ -1,6 +1,6 @@
 {
   "name": "vite-template-react",
-  "version": "0.15.1",
+  "version": "0.17.0",
   "scripts": {
     "start": "vite --port 44461",
     "dev": "vite",

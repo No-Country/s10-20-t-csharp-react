@@ -12,6 +12,12 @@ export function EditProfileCard() {
 
   const userContext = useContext(UserContext);
 
+  const token = localStorage.getItem("userSession");
+
+  const config = {
+    headers: { Authorizaton: `Bearer ${token}` },
+  };
+
   return (
     <form
       className="p-4 bg-white flex gap-4 border border-slate-500 rounded-2xl w-[40em]"
@@ -20,7 +26,7 @@ export function EditProfileCard() {
       onSubmit={handleSubmit(data => {
         console.log(data);
         axios
-          .put("https://s10nc.somee.com/api/me", data)
+          .patch("https://s10nc.somee.com/api/me", config)
           .then(res => {
             console.log(res.status);
             alert("Datos cambiados");
@@ -51,7 +57,7 @@ export function EditProfileCard() {
           <input
             id="image_upload"
             name="image_upload"
-            className="absolute top-2 left-2 file:border-0 file:bg-transparent file:opacity-0 file:text-transparent"
+            className="w-10 absolute top-2 left-2 file:border-0 file:bg-transparent file:opacity-0 file:text-transparent"
             type="file"
             accept=".jpg, .jpeg, .png"
           />

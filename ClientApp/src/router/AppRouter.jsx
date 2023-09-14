@@ -17,6 +17,7 @@ import { UserProvider } from "../store/userContext";
 import { CommentsProvider } from "../store/commentsContext";
 import { CommentsReceivedProvider } from "../store/commentsReceived";
 import { FavoriteProvider } from "../store/favoritesContext";
+import { Terms } from "../pages/terms";
 
 const router = createBrowserRouter([
   {
@@ -45,16 +46,20 @@ const router = createBrowserRouter([
     element: <EditProfile />,
   },
   {
-    path: "*",
-    element: <NotFound />,
-  },
-  {
     path: "/report",
     element: <MyReports />,
   },
   {
     path: "/muro",
     element: <Muro />,
+  },
+  {
+    path: "/terms",
+    element: <Terms />,
+  },
+  {
+    path: "*",
+    element: <NotFound />,
   },
 ]);
 

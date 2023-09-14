@@ -150,7 +150,7 @@ const Register = () => {
 
                   <button
                     type="submit"
-                    className="btn btn-md bg-blue-950 text-white font-bold px-10 mt-4 border border-black "
+                    className="p-2 rounded-xl bg-terciary-100 text-white font-bold mt-4 "
                     onClick={() => registerNewUser()}
                   >
                     Registrarme

@@ -50,7 +50,7 @@ export function MyProfile() {
     <div>
       <MainLayout>
         <section className="pt-16 pb-20">
-          <div className="w-[45em] mx-auto border border-slate-400 shadow-sm p-4 flex flex-col gap-8 font-normal rounded-2xl">
+          <div className="w-[50em] mx-auto border border-slate-400 shadow-sm p-4 flex flex-col gap-8 font-normal rounded-2xl">
             <div className="flex gap-8 items-center ">
               <div className="relative flex justify-center items-center">
                 <img
@@ -74,7 +74,7 @@ export function MyProfile() {
               </Link>
             </div>
             <nav>
-              <ul className="flex gap-4 justify-between font-light">
+              <ul className="sm:flex items-center sm:gap-4 gap-2 justify-between font-light">
                 <li className="">
                   <button
                     aria-selected="true"
@@ -184,25 +184,33 @@ export function MyProfile() {
                     </li>
                   ))
                 ) : (
-                  <p className="text-slate-700">No hay elementos</p>
+                  <p className="text-slate-700 sm:text-center">
+                    No hay elementos
+                  </p>
                 )
               ) : which.comentarios ? (
                 commentsContext?.length > 0 ? (
                   JSON.stringify(commentsContext)
                 ) : (
-                  <p className="text-slate-700">No hay comentarios</p>
+                  <p className="text-slate-700 sm:text-center">
+                    No hay comentarios
+                  </p>
                 )
               ) : which.favoritos ? (
                 favoritesContext?.length > 0 ? (
                   JSON.stringify(favoritesContext)
                 ) : (
-                  <p className="text-slate-700">No hay favoritos</p>
+                  <p className="text-slate-700 sm:text-center">
+                    No hay favoritos
+                  </p>
                 )
               ) : which.comentariosRecibidos ? (
                 commentsReceivedContext?.length > 0 ? (
                   JSON.stringify(commentsReceivedContext)
                 ) : (
-                  <p className="text-slate-700">No hay comentarios</p>
+                  <p className="text-slate-700 sm:text-center">
+                    No hay comentarios
+                  </p>
                 )
               ) : null}
             </ul>

@@ -1,16 +1,52 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
+import { MainLayout } from "../layout/MainLayout";
+import HelpIcon from "../assets/icons/help-information-question.svg";
+import SpeakerIcon from "../assets/icons/broadcast.svg";
+import PressIcon from "../assets/icons/press.svg";
+import LikeIcon from "../assets/icons/like.svg";
 import puzzle from "../assets/puzzle.png";
 import flechaAbajo from "../assets/icons/flecha.svg";
 import logo from "../assets/logo.svg";
-import { MainLayout } from "../layout/MainLayout";
 
 const featuresItems = [
-  "Ayudá a visibilizar las problematicas frecuentes en los bienes publicos de tu ciudad",
-  "Enterate de los reportes de otros ciudadanos",
-  "Controbuí a mantener los espacios comunes en optimas condiciones",
-  "Sé responsable...",
+  <div id="first-row" className="flex gap-8 w-42">
+    <div className="flex gap-2 items-center">
+      <img width="80" height="80" src={HelpIcon} alt="Ícono sobre ayudar" />
+      <p className="w-[28ch]">
+        Ayudá a visibilizar las problematicas frecuentes en los bienes públicos
+        de tu ciudad,
+      </p>
+    </div>
+
+    <div className="flex gap-2 items-center">
+      <img width="80" height="80" src={SpeakerIcon} alt="Ícono de un altavoz" />
+      <p className="w-[28ch]">Entérate de los reportes de otros ciudadanos,</p>
+    </div>
+  </div>,
+  <div id="second-row" className="flex gap-8">
+    <div className="flex gap-2 items-center">
+      <img
+        width="80"
+        height="80"
+        src={PressIcon}
+        alt="Ícono sobre una mano presionando"
+      />
+      <p className="w-[28ch]">
+        Contribuí a mantener los espacios comunes en óptimas condiciones
+      </p>
+    </div>
+    <div className="flex gap-2 items-center">
+      <img
+        width="80"
+        height="80"
+        src={LikeIcon}
+        alt="Ícono de pulgares arriba"
+      />
+      <p className="w-[28ch]">Sé responsable...</p>
+    </div>
+  </div>,
 ];
 
 export default function Landing() {
@@ -28,6 +64,7 @@ export default function Landing() {
                 height="500"
                 src={puzzle}
                 alt="Personas sobre un rompecabezas"
+                className=""
               />
             </div>
             <div
@@ -66,11 +103,11 @@ export default function Landing() {
           </div>
         </div>
 
-        <section className="flex flex-col items-center gap-8 py-10">
-          <ul className="flex flex-col gap-4">
+        <section className="flex justify-center items-center gap-8 py-16">
+          <ul className="flex flex-col gap-10 items-center justify-center">
             {featuresItems.map((item, id) => (
-              <li key={id} className="text-title-lg text-black">
-                {item}
+              <li key={id} className="text-lg text-black w-[70ch]">
+                {<p>{item}</p>}
               </li>
             ))}
           </ul>

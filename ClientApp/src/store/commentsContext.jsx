@@ -5,12 +5,17 @@ import { useContext, useEffect } from "react";
 function useCommentsSource() {
   const [comments, setComments] = useState([]);
 
+  const token = localStorage.getItem("userSession");
+
+  const config = {
+    headers: { Authorization: `Bearer ${token}` },
+  };
+
   useEffect(() => {
     axios
-      .get("https://s10nc.somee.com/api/comments/left", {
-        withCredentials: true,
-      })
-      .then(res => setComments(res.data.data));
+      .get("https://s10nc.somee.com/api/comments/left", config)
+      .then(res => setComments(res.data.data))
+      .catch(err => console.error(err));
   }, []);
   console.log(comments);
 
