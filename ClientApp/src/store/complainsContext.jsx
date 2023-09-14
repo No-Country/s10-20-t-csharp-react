@@ -29,11 +29,15 @@ export const useComplainsSource = () => {
     }
   }, []);
 
+  const token = localStorage.getItem("userSession");
+
+  const config = {
+    headers: { Authorization: `Bearer ${token}` },
+  };
+
   useEffect(() => {
     axios
-      .get("https://s10nc.somee.com/api/me/quejas", {
-        withCredentials: true,
-      })
+      .get("https://s10nc.somee.com/api/me/quejas", config)
       .then(res => {
         console.log(res.data.data);
         dispatch({
