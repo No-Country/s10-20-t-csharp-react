@@ -5,6 +5,7 @@ import { PublicRoutes, PrivateRoutes, AuthRouter, AppRouter } from "../router";
 import Register from "../pages/Register";
 import SignIn from "../pages/SignIn";
 import Report from "../pages/Report/report";
+import MyReports from "../pages/MyReports";
 
 
 export function App() {
@@ -16,7 +17,7 @@ export function App() {
                         <Route path="/" element={<Home />} />
                         <Route path="/register" element={<Register />} />
                         <Route path="/login" element={<SignIn />} />
-                        <Route path="/report" element={<Report />} />
+                        <Route path="/report" element={<MyReports />} />
                   </Routes>
               </BrowserRouter>
    
