@@ -1,13 +1,5 @@
-import {
-  useState,
-  createContext,
-  useEffect,
-  useReducer,
-  useContext,
-} from "react";
+import { createContext, useEffect, useReducer, useContext } from "react";
 import axios from "axios";
-
-export const ComplainsContext = createContext([]);
 
 export const useComplainsSource = () => {
   const [complains, dispatch] = useReducer((state, action) => {
@@ -38,17 +30,24 @@ export const useComplainsSource = () => {
   }, []);
 
   useEffect(() => {
-    axios.get("https://s10nc.somee.com/api/quejas").then(res => {
-      console.log(res.data.data);
-      dispatch({
-        type: "setComplains",
-        payload: res.data.data,
-      });
-    });
+    axios
+      .get("https://s10nc.somee.com/api/me/quejas", {
+        withCredentials: true,
+      })
+      .then(res => {
+        console.log(res.data.data);
+        dispatch({
+          type: "setComplains",
+          payload: res.data.data,
+        });
+      })
+      .catch(error => console.error(error));
   }, []);
 
   return complains;
 };
+
+const ComplainsContext = createContext();
 
 export const useComplains = () => {
   return useContext(ComplainsContext);
