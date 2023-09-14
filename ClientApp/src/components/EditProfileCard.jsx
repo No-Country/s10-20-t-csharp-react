@@ -14,7 +14,7 @@ export function EditProfileCard() {
 
   return (
     <form
-      className="p-4 bg-white flex gap-4 border border-slate-500 rounded-2xl w-[40em]"
+      className="p-4 sm:p-2 bg-white flex sm:flex-col sm:items-center gap-4 border border-slate-500 rounded-2xl w-[40em] sm:w-[20em]"
       method="post"
       encType="multipart/form-data"
       onSubmit={handleSubmit(data => {
@@ -51,7 +51,7 @@ export function EditProfileCard() {
           <input
             id="image_upload"
             name="image_upload"
-            className="absolute top-2 left-2 file:border-0 file:bg-transparent file:opacity-0 file:text-transparent"
+            className="w-10 absolute top-2 left-2 file:border-0 file:bg-transparent file:opacity-0 file:text-transparent"
             type="file"
             accept=".jpg, .jpeg, .png"
           />
