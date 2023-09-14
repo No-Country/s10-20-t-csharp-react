@@ -1,12 +1,16 @@
 ﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using quejapp.Models;
 using s10.Back.Data.IRepositories;
 using s10.Back.DTO;
 using System.ComponentModel.DataAnnotations;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Text;
 
 namespace s10.Back.Controllers
 {
@@ -19,13 +23,15 @@ namespace s10.Back.Controllers
         //private readonly RoleManager<IdentityRole> _roleManager;
         //private readonly IConfiguration _configuration;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IConfiguration _configuration;
 
 
-        public AuthController(IUnitOfWork unitOfWork, SignInManager<AppUser> signInManager, UserManager<AppUser> userManager)
+        public AuthController(IUnitOfWork unitOfWork, SignInManager<AppUser> signInManager, UserManager<AppUser> userManager, IConfiguration configuration)
         {
             _userManager = userManager;
             _unitOfWork = unitOfWork;
             _signInManager = signInManager;
+            _configuration = configuration;
         }
 
         [HttpGet("IsAuthenticated")]
@@ -60,15 +66,27 @@ namespace s10.Back.Controllers
                 //bad credentials
                 return Unauthorized();
             }
-            var claims = new List<Claim>() { new Claim(ClaimTypes.Email, user.Email) };
 
-            //migrate user to identity
-            if (String.IsNullOrEmpty(user.SecurityStamp))
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]);
+            var tokenDescriptor = new SecurityTokenDescriptor
             {
-                await _userManager.UpdateSecurityStampAsync(user);
-            }
-            
-            await _signInManager.SignInWithClaimsAsync(user, isPersistent: true, claims);
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+                      new Claim(ClaimTypes.Name,user.Name),
+                      new Claim(ClaimTypes.Email,user.Email),
+                      new Claim(ClaimTypes.GivenName,user.GivenName),
+                      new Claim(ClaimTypes.Surname,user.LastName),
+                      new Claim(ClaimTypes.NameIdentifier, user.Id)
+
+                }),
+                Expires = DateTime.UtcNow.AddHours(100), 
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var tokenString = tokenHandler.WriteToken(token);
+
 
             return Ok(new MeGetDto()
             {
@@ -77,7 +95,8 @@ namespace s10.Back.Controllers
                 GivenName = user.GivenName,
                 LastName = user.LastName,
                 Picture_Url = user.ProfilePicAddress,
-                Address = user.Address
+                Address = user.Address,
+                Token = tokenString,
             });
         }
 
@@ -98,15 +117,16 @@ namespace s10.Back.Controllers
                 Email = model.Email,
                 UserName = model.Email,
                 Name = model.GivenName + " " + model.SurName,
-                GivenName= model.GivenName??null,
-                LastName = model.SurName??null,
+                GivenName = model.GivenName ?? null,
+                LastName = model.SurName ?? null,
             };
             try
             {
 
                 var result = await _userManager.CreateAsync(newUser, "S10nc123!");
 
-                if(!result.Succeeded) {
+                if (!result.Succeeded)
+                {
                     return BadRequest(result.Errors.Select(x => x));
                 }
             }

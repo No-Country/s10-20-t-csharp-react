@@ -101,7 +101,7 @@ public class QuejaRepository : GenericRepository<Queja>, IQuejaRepository
         }
         else
         {
-            return null;
+            return  new PagedList<QuejaResponseDTO>(new List<QuejaResponseDTO>(),0,0,0);
         }
     }
     public async Task<Queja> Update(QuejaDTO model, int qId)
