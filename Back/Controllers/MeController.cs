@@ -19,6 +19,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security.Claims;
 using System.Xml.Linq;
+using static s10.Back.DTO.MeGetDto;
 using Location = s10.Back.DTO.Location;
 
 namespace s10.Back.Controllers

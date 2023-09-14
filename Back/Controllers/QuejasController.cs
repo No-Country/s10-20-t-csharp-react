@@ -197,9 +197,9 @@ public class QuejasController : ControllerBase
     public async Task<ActionResult<QuejaResponseDTO>> GetById(int id)
     {
         var unitOfWork = new UnitOfWork(_context);
-        var theQueja = unitOfWork.Quejas.GetPaged(id).First();
+        var theQueja = unitOfWork.Quejas.GetPaged(id).FirstOrDefault();
 
-        if (theQueja != null)
+        if (theQueja != null )
         {
             
             theQueja.Location.Latitude = theQueja.Latitude.Value;

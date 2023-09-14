@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using NetTopologySuite;
 using NetTopologySuite.Geometries;
@@ -11,14 +13,14 @@ using s10.Back.Data;
 using s10.Back.Data.IRepositories;
 using s10.Back.Data.Repositories;
 using s10.Back.Handler;
-
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<RedCoContext>(
-   options => 
+   options =>
        options.UseSqlServer(builder.Configuration.GetConnectionString("s10"),
-    sqlServerOptions => sqlServerOptions.UseNetTopologySuite()    
+    sqlServerOptions => sqlServerOptions.UseNetTopologySuite()
    ));
 
 builder.Services.AddScoped<ICloudinaryService, CloudinaryHelper>();
@@ -33,37 +35,35 @@ builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
 
 })
     .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<RedCoContext>();
+    .AddEntityFrameworkStores<RedCoContext>()
+    .AddDefaultTokenProviders();
 
 
 builder.Services.AddAuthentication(options =>
 {
-    options.RequireAuthenticatedSignIn = true;
-    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    // options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
 })
-          .AddCookie(options =>
-          {
-              options.Events.OnRedirectToAccessDenied =
-                  options.Events.OnRedirectToLogin = c =>
-                  {
-                      c.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                      return Task.FromResult<object>(null);
-                  };
-
-          })
-          .AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
-          {
-              var googleAuth = builder.Configuration.GetSection("Authentication:Google");
-              options.ClientId = googleAuth["ClientId"];
-              options.ClientSecret = googleAuth["ClientSecret"];
-          });
+    .AddJwtBearer(options =>
+{
+    options.SaveToken = true;
+    options.RequireHttpsMetadata = false;
+    options.TokenValidationParameters = new TokenValidationParameters()
+    {
+        ValidateLifetime = true,
+        RequireExpirationTime = true,
+        ValidateIssuer = false,
+        ValidateAudience = false,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+    };
+});
 
 #endregion
 
-builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-builder.Services.AddControllers(options => 
+builder.Services.AddControllers(options =>
 {
     options.EnableEndpointRouting = false;
     options.CacheProfiles.Add("NoCache", new CacheProfile() { NoStore = true });
@@ -108,13 +108,25 @@ builder.Services.AddSingleton<GeometryFactory>(
 
 builder.Services.AddAuthorization();
 
+//builder.Services.AddCors(options =>
+//{
+//    options.AddPolicy("AllowAll", p =>
+//    {
+//        //p.AllowAnyOrigin()
+//        p.AllowAnyHeader()
+//        .AllowAnyMethod()
+//        .SetIsOriginAllowed(hostName => true)
+//        // .WithOrigins("https://localhost:5173", "https://localhost:44461", "https://s10nc.somee.com")
+//        .AllowCredentials();
+//    });
+//});
 
-builder.Services.AddAuthorization();
 builder.Services.AddCors(o =>
 {
     o.AddDefaultPolicy(policy =>
     {
-        policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+        policy.SetIsOriginAllowed(hostName => true)
+        .AllowAnyHeader().AllowAnyMethod().AllowCredentials();
     });
 });
 
@@ -123,10 +135,10 @@ var app = builder.Build();
 
 app.UseSwagger();
 app.UseSwaggerUI();
-app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseCors();
+app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllerRoute(

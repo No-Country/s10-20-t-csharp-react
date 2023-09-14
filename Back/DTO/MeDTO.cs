@@ -9,8 +9,8 @@
         public string? Description { get; set; }
         public string? Picture_Url { get; set; }
         public string? Address { get; internal set; }
+        public string? Token { get; set; }
     }
-
     public class MePatchDto
     {
 //public string? Name { get; set; }

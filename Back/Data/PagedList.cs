@@ -37,6 +37,7 @@ public static class PagedListExtensions
         //TODO will require a mapper
         var pagedResponse = new PagedListResponse<TResult>();
         pagedResponse.TotalPages = data.TotalPages;
+        pagedResponse.TotalItems = data.TotalCount;
         pagedResponse.CurrentPage = data.CurrentPage;
         pagedResponse.PageSize = data.PageSize;
         pagedResponse.Next = data.HasNext ? $"{url}?" +
