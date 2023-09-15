@@ -29,12 +29,12 @@ En la misma se puede:
 
 ## Roles
 - **Sofia Allegreti**: Diseñadora UI/UX
-- **Elias Pereyra Gómez**: Desarrollador Front-end
-- **Octavio Salas**: Desarrollador Front-end
-- **Ana Juárez**: Desarrolladora Front-end
-- **David Echeverri**: Desarrollador Front-end
-- **Esteban Nuñez**: Desarrollador Back-end
-- **Daniel Torres**: Desarrollador Back-end
+- [**Elias Pereyra Gómez**](https://github.com/EliasPereyra): Desarrollador Front-end
+- [**Octavio Salas**](https://github.com/octaviosalas): Desarrollador Front-end
+- [**Ana Juárez**](https://github.com/Layeska): Desarrolladora Front-end
+- [**David Echeverri**](https://github.com/echeverri71): Desarrollador Front-end
+- [**Esteban Nuñez**](https://github.com/estebanahl): Desarrollador Back-end
+- [**Daniel Torres**](https://github.com/DnTo): Desarrollador Back-end
 
 ## Hosting
 [Link](https://s10nc.somee.com/) de la aplicación web. 
