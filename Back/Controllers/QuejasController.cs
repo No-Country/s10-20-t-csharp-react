@@ -199,9 +199,9 @@ public class QuejasController : ControllerBase
         var unitOfWork = new UnitOfWork(_context);
         var theQueja = unitOfWork.Quejas.GetPaged(id).FirstOrDefault();
 
-        if (theQueja != null )
+        if (theQueja != null)
         {
-            
+
             theQueja.Location.Latitude = theQueja.Latitude.Value;
             theQueja.Location.Longitude = theQueja.Longitude.Value;
 
@@ -220,10 +220,17 @@ public class QuejasController : ControllerBase
     [ResponseCache(CacheProfileName = "NoCache")]
     public async Task<ActionResult<QuejaResponseDTO>> Post([FromForm] QuejaPostDTO model)
     {
-        IFormFile? file = model.media;
-        var uploadResult = new ImageUploadResult();
-
-        uploadResult = await _cloudinaryService.AddPhotoAsync(file);
+        IFormFile? file = model.media; 
+        //en el caso de que venga de queja2? 
+        //Bug front : File llega con nombre "media[]:
+        if (model.media == null)
+        {
+            file = HttpContext.Request.Form.Files.First();
+            if (file == null)
+                return BadRequest("No llega media ");
+        }
+      
+        var uploadResult = await _cloudinaryService.AddPhotoAsync(file);
         if (uploadResult.Error is not null)
         {
             return Problem($"Error al crear la queja : No se pudo guardar la imagen: {uploadResult.Error}");
@@ -261,9 +268,9 @@ public class QuejasController : ControllerBase
             }
             else
             {
-                ModelState.AddModelError( nameof(model.Category_ID),"Category not found");
+                ModelState.AddModelError(nameof(model.Category_ID), "Category not found");
                 return BadRequest(ModelState);
-                    
+
             }
         }
         catch (DbUpdateException e)
@@ -289,15 +296,21 @@ public class QuejasController : ControllerBase
     [ResponseCache(CacheProfileName = "NoCache")]
     public async Task<ActionResult<QuejaResponseDTO>> Post([FromForm] QuejaPostDTO2 model)
     {
+        IFormFile? file = HttpContext.Request.Form.Files.First();
+
+        if (file == null) return BadRequest(ModelState);
+
         QuejaPostDTO queja = new QuejaPostDTO()
         {
             Category_ID = model.Category_ID,
             IsAnonymous = model.IsAnonymous,
             Location = model.Location,
-            media   = model.media[0],
+            //  media   = model.media[0],
             Text = model.Text,
-            Title   = model.Title
+            Title = model.Title
         };
+
+        queja.media = file;
         return await Post(queja);
     }
 
