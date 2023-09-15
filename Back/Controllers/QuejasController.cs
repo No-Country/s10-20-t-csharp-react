@@ -223,7 +223,7 @@ public class QuejasController : ControllerBase
         IFormFile? file = model.media; 
         //en el caso de que venga de queja2? 
         //Bug front : File llega con nombre "media[]:
-        if (model.media == null)
+        if (file == null)
         {
             file = HttpContext.Request.Form.Files.First();
             if (file == null)
@@ -290,15 +290,19 @@ public class QuejasController : ControllerBase
         }
     }
 
-
+   
     [HttpPost("queja2")]
     [Authorize]
     [ResponseCache(CacheProfileName = "NoCache")]
     public async Task<ActionResult<QuejaResponseDTO>> Post([FromForm] QuejaPostDTO2 model)
     {
-        IFormFile? file = HttpContext.Request.Form.Files.First();
+        IFormFile? file = model.media.FirstOrDefault();
 
-        if (file == null) return BadRequest(ModelState);
+        if (file == null)
+        {
+            file = HttpContext.Request.Form.Files.FirstOrDefault();
+            if (file == null) return BadRequest(ModelState);
+        }
 
         QuejaPostDTO queja = new QuejaPostDTO()
         {
