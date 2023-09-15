@@ -28,7 +28,7 @@ En la misma se puede:
 - ![Youtube API v3][Youtube API v3]
 
 ## Roles
-- **Sofia Allegreti**: Diseñadora UI/UX
+- [**Sofia Allegreti**](https://behance.net/sofiaallegretti2): Diseñadora UI/UX
 - [**Elias Pereyra Gómez**](https://github.com/EliasPereyra): Desarrollador Front-end
 - [**Octavio Salas**](https://github.com/octaviosalas): Desarrollador Front-end
 - [**Ana Juárez**](https://github.com/Layeska): Desarrolladora Front-end
