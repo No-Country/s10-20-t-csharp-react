@@ -1,4 +1,10 @@
-# Red Co.
+<div align="center">
+  <img src="https://github.com/No-Country/s10-20-t-csharp-react/blob/main/ClientApp/src/assets/logo.svg" alt="Logo de la página" />
+  <h1>Red Co.</h1>
+  <p>Un sitio web donde podés dejar tus reclamos en tu localidad</p>
+</div>
+
+## Sobre el proyecto
 _Red Comunidad_ es una Web de reclamos vecinales y ciudadanos, donde se podrá reportar y visibilizar problemáticas ciudadanas y/o de infraestructura comunes a todos.
 
 En la misma se puede: 
